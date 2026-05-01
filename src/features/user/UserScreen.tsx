@@ -1,60 +1,78 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import DATA from "../../data";
 import { FullUserData } from "../../types/User";
+import { useSelector } from "react-redux";
+import { RootState } from "../../core/store";
 
 const ProfileScreen = () => {
-  // Simulation de récupération de l'utilisateur connecté (Lucas / user1)
-  const userId = "user1";
+  // ✅ userId vient maintenant de Redux (auth)
+  const userId = useSelector((state: RootState) => state.auth.userId);
 
-  // On récupère les données brutes
+  if (!userId) {
+    return null;
+  }
+
   const rawUserBase = DATA.users.find((u) => u.id === userId);
   const rawUserProfile = DATA.userProfiles.find((p) => p.id === userId);
 
-  // On les "cast" en FullUserData pour faire croire à TS qu'elles sont dynamiques
-  // Le "unknown" sert de passerelle pour effacer le côté 'readonly' de ton fichier DATA
-  const user = { ...rawUserBase, ...rawUserProfile } as unknown as FullUserData;
+  if (!rawUserBase || !rawUserProfile) {
+    return null;
+  }
+
+  const user = {
+    ...rawUserBase,
+    ...rawUserProfile,
+  } as unknown as FullUserData;
+
+  // ✅ EVENTS (safe, inchangé)
+  const totalEvents =
+    (user.myEvents?.created?.length ?? 0) +
+    (user.myEvents?.invited?.length ?? 0);
+
+  // ✅ FRIENDS (structure map userId -> status)
+  const friendsCount = Object.values(user.contactsStatusCache ?? {}).filter(
+    (status) => status === "accepted",
+  ).length;
 
   return (
     <SafeAreaProvider style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header Profil */}
+        {/* HEADER */}
         <View style={styles.header}>
           <Image source={{ uri: user.profileImage }} style={styles.avatar} />
+
           <Text style={styles.name}>
             {user.firstName} {user.lastName}
           </Text>
+
           <Text style={styles.email}>{user.email}</Text>
         </View>
 
-        {/* Statistiques (Amis / Événements) */}
+        {/* STATS */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>
-              {user.contactsStatusCache.accepted.length}
-            </Text>
+            <Text style={styles.statNumber}>{friendsCount}</Text>
             <Text style={styles.statLabel}>Amis</Text>
           </View>
+
           <View style={styles.separator} />
+
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>{user.myEvents.length}</Text>
+            <Text style={styles.statNumber}>{totalEvents}</Text>
             <Text style={styles.statLabel}>Événements</Text>
           </View>
         </View>
 
-        {/* Informations de contact */}
+        {/* CONTACT */}
         <View style={styles.infoSection}>
           <Text style={styles.sectionTitle}>Contact</Text>
+
           <View style={styles.infoCard}>
-            <Text style={styles.infoText}>📱 {user.phone}</Text>
+            <Text style={styles.infoText}>
+              📱 {user.phone ?? "Non renseigné"}
+            </Text>
           </View>
         </View>
       </ScrollView>

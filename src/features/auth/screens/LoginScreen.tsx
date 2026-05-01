@@ -68,7 +68,7 @@ const LoginScreen = () => {
             <View style={styles.logo}>
               <Image
                 style={styles.image}
-                source={require("../../../assets/LogclockLogo3.png")}
+                source={require("../../../../assets/LogclockLogo3.png")}
               />
               <Text style={styles.welcomeText}>{t.welcome}</Text>
             </View>

@@ -19,9 +19,15 @@ export interface ContactsStatusCache {
 export interface User {
   id: string;
   location: Location;
-  contacts: Record<string, FriendRelation>; // Clé dynamique (ex: "user2")
+
+  contacts: Record<string, FriendRelation>;
+
   contactsStatusCache: ContactsStatusCache;
-  myEvents: string[];
+
+  myEvents: {
+    created: string[];
+    invited: string[];
+  };
 }
 
 export interface UserProfile {

@@ -8,7 +8,9 @@ import LoginScreen from "./src/features/auth/screens/LoginScreen";
 import LanguageScreen from "./src/features/locales/LanguageScreen";
 import { createStaticNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import RegisterScreen from "./src/features/auth/screens/RegisterScreen";
 import ContactsScreen from "./src/features/contacts/screens/ContactsScreen";
@@ -16,6 +18,7 @@ import ContactsTabs from "./src/features/contacts/ContactsTabs";
 import { DrawerActions } from "@react-navigation/native";
 import ProfileScreen from "./src/features/user/UserScreen";
 import EventsTabs from "./src/features/events/EventsTabs";
+import EventDetailsScreen from "./src/features/events/screens/EventDetailsScreen";
 
 const MainTabs = createBottomTabNavigator({
   screenOptions: {
@@ -125,7 +128,7 @@ const MainTabs = createBottomTabNavigator({
         },
         */
         tabBarIcon: ({ size, color }) => (
-          <FontAwesome5 name="user-contacts" size={size} color={color} />
+          <AntDesign name="contacts" size={size} color={color} />
         ),
       },
     },
@@ -136,6 +139,28 @@ const MainTabs = createBottomTabNavigator({
       paddingLeft: 15, // Donne de l'air à gauche
       transform: [{ scale: 1.5 }],
     },*/
+
+const EventsStack = createNativeStackNavigator({
+  screenOptions: {
+    headerShown: false,
+  },
+  screens: {
+    Selected: {
+      screen: EventsTabs,
+      options: {
+        title: "Accueil",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+    EventDetails: {
+      screen: EventDetailsScreen,
+      options: {
+        title: "Détails event",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+  },
+});
 
 const MyDrawer = createDrawerNavigator({
   // Utilise ":" ici, pas "="
@@ -156,6 +181,15 @@ const MyDrawer = createDrawerNavigator({
   }),
 
   screens: {
+    Profile: {
+      screen: ProfileScreen,
+      options: {
+        title: "My profile",
+        drawerIcon: ({ color }) => (
+          <MaterialIcons name="account-circle" size={24} color={color} />
+        ),
+      },
+    },
     Contacts: {
       screen: ContactsTabs,
       options: {
@@ -169,17 +203,8 @@ const MyDrawer = createDrawerNavigator({
         ),
       },
     },
-    Profile: {
-      screen: ProfileScreen,
-      options: {
-        title: "My profile",
-        drawerIcon: ({ color }) => (
-          <MaterialIcons name="account-circle" size={24} color={color} />
-        ),
-      },
-    },
     Events: {
-      screen: EventsTabs,
+      screen: EventsStack,
       options: {
         title: "Events",
         drawerIcon: ({ color }) => (

@@ -8,6 +8,7 @@ const DATA = {
       firstName: "Lucas",
       lastName: "Martin",
       email: "lucas.martin@example.com",
+      phone: "+33687654321",
       profileImage: "https://randomuser.me/api/portraits/men/32.jpg",
     },
     {
@@ -15,6 +16,7 @@ const DATA = {
       firstName: "Alice",
       lastName: "Dubois",
       email: "alice.dubois@example.com",
+      phone: "+33687654321",
       profileImage: "https://randomuser.me/api/portraits/women/69.jpg",
     },
     {
@@ -22,6 +24,7 @@ const DATA = {
       firstName: "Karim",
       lastName: "Benali",
       email: "karim.benali@example.com",
+      phone: "+33687654321",
       profileImage: "https://randomuser.me/api/portraits/men/65.jpg",
     },
     {
@@ -29,6 +32,7 @@ const DATA = {
       firstName: "Sophie",
       lastName: "Leroy",
       email: "sophie.leroy@example.com",
+      phone: "+33687654321",
       profileImage: "https://randomuser.me/api/portraits/women/88.jpg",
     },
   ],
