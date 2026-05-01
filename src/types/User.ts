@@ -9,7 +9,7 @@ export interface FriendRelation {
   addedAt: string;
 }
 
-export interface FriendsStatusCache {
+export interface ContactsStatusCache {
   accepted: string[];
   pending: string[];
   blocked: string[];
@@ -19,8 +19,8 @@ export interface FriendsStatusCache {
 export interface User {
   id: string;
   location: Location;
-  friends: Record<string, FriendRelation>; // Clé dynamique (ex: "user2")
-  friendsStatusCache: FriendsStatusCache;
+  contacts: Record<string, FriendRelation>; // Clé dynamique (ex: "user2")
+  contactsStatusCache: ContactsStatusCache;
   myEvents: string[];
 }
 

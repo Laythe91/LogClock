@@ -1,16 +1,16 @@
 // src/core/store.ts
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
-import friendsReducer from "../features/friends/friendsSlice";
+import contactsReducer from "../features/contacts/contactsSlice";
 import eventsReducer from "../features/events/eventsSlice";
 import localesReducer from "../features/locales/localesSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    friends: friendsReducer,
+    contacts: contactsReducer,
     events: eventsReducer,
-    locales: localesReducer, // ✅ ajouter locales
+    locales: localesReducer, //
   },
 });
 

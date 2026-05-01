@@ -1,61 +1,48 @@
-// src/features/events/eventsSlice.ts
-import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
-import { Event } from "../../types/Event";
-import { RootState } from "../../core/store";
+import {
+  createSlice,
+  createEntityAdapter,
+  PayloadAction,
+} from "@reduxjs/toolkit";
+import { Event, ParticipantStatus } from "../../types/Event";
+import DATA from "../../data";
+import { logout } from "../auth/authSlice";
 
-/*const initialState = {
-  createdEvents: [], // Données venant de /users/me/events
-  invitedEvents: [], // Données chargées via les références dans /users/me/myInvitations
-  loading: false,
-};
+const eventsAdapter = createEntityAdapter<Event>();
 
-const eventsSlice = createSlice({
-  name: "events",
+const initialState = eventsAdapter.getInitialState();
+
+const hydratedState = eventsAdapter.setAll(
   initialState,
-  reducers: {
-    setCreatedEvents: (state, action) => {
-      state.createdEvents = action.payload;
-    },
-    setInvitedEvents: (state, action) => {
-      state.invitedEvents = action.payload;
-    },
-  },
-});
-
-// SELECTEURS MÉMOÏSÉS
-const selectCreated = (state: RootState) => state.events.createdEvents;
-const selectInvited = (state: RootState) => state.events.invitedEvents;
-
-export const selectAllMyVisibleEvents = createSelector(
-  [selectCreated, selectInvited],
-  (created, invited) => {
-    // On fusionne les deux pour la Vue Carte par exemple
-    return [...created, ...invited];
-  },
+  DATA.events as Event[],
 );
-*/
-
-interface EventsState {
-  events: Event[];
-}
-
-const initialState: EventsState = {
-  events: [],
-};
 
 const eventsSlice = createSlice({
   name: "events",
-  initialState,
+  initialState: hydratedState,
   reducers: {
-    setEvents(state, action: PayloadAction<Event[]>) {
-      state.events = action.payload;
+    setEvent: eventsAdapter.upsertOne,
+
+    updateParticipantStatus: (
+      state,
+      action: PayloadAction<{
+        eventId: string;
+        userId: string;
+        status: ParticipantStatus;
+      }>,
+    ) => {
+      const { eventId, userId, status } = action.payload;
+      const event = state.entities[eventId];
+
+      if (event) {
+        event.participants[userId] = status;
+      }
     },
-    addEvent(state, action: PayloadAction<Event>) {
-      state.events.push(action.payload);
-    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logout, () => initialState);
   },
 });
 
-export const { setEvents, addEvent } = eventsSlice.actions;
-// ✅ export par défaut*/
+export const { setEvent, updateParticipantStatus } = eventsSlice.actions;
+export { eventsAdapter };
 export default eventsSlice.reducer;

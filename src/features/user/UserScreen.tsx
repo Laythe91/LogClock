@@ -39,7 +39,7 @@ const ProfileScreen = () => {
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={styles.statNumber}>
-              {user.friendsStatusCache.accepted.length}
+              {user.contactsStatusCache.accepted.length}
             </Text>
             <Text style={styles.statLabel}>Amis</Text>
           </View>

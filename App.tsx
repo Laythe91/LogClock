@@ -11,10 +11,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import RegisterScreen from "./src/features/auth/screens/RegisterScreen";
-import FriendsScreen from "./src/features/friends/screens/FriendsScreen";
-import FriendsTabs from "./src/features/friends/FriendsTabs";
+import ContactsScreen from "./src/features/contacts/screens/ContactsScreen";
+import ContactsTabs from "./src/features/contacts/ContactsTabs";
 import { DrawerActions } from "@react-navigation/native";
 import ProfileScreen from "./src/features/user/UserScreen";
+import EventsTabs from "./src/features/events/EventsTabs";
 
 const MainTabs = createBottomTabNavigator({
   screenOptions: {
@@ -104,11 +105,11 @@ const MainTabs = createBottomTabNavigator({
         ),
       },
     },
-    Friends: {
-      screen: FriendsScreen,
+    Contacts: {
+      screen: ContactsScreen,
       options: {
-        title: "Friends",
-        tabBarLabel: "Friends",
+        title: "Contacts",
+        tabBarLabel: "Contacts",
         tabBarActiveTintColor: "white", // sélectionné
         tabBarInactiveTintColor: "black", // non sélectionné
         /*        headerStyle: {
@@ -124,7 +125,7 @@ const MainTabs = createBottomTabNavigator({
         },
         */
         tabBarIcon: ({ size, color }) => (
-          <FontAwesome5 name="user-friends" size={size} color={color} />
+          <FontAwesome5 name="user-contacts" size={size} color={color} />
         ),
       },
     },
@@ -155,8 +156,8 @@ const MyDrawer = createDrawerNavigator({
   }),
 
   screens: {
-    Friends: {
-      screen: FriendsTabs,
+    Contacts: {
+      screen: ContactsTabs,
       options: {
         title: "Amis",
         drawerIcon: ({ color }) => (
@@ -174,6 +175,15 @@ const MyDrawer = createDrawerNavigator({
         title: "My profile",
         drawerIcon: ({ color }) => (
           <MaterialIcons name="account-circle" size={24} color={color} />
+        ),
+      },
+    },
+    Events: {
+      screen: EventsTabs,
+      options: {
+        title: "Events",
+        drawerIcon: ({ color }) => (
+          <MaterialIcons name="event-note" size={24} color={color} />
         ),
       },
     },
