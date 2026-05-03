@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../core/store";
 import { selectUserById } from "../../contacts/contactsSelectors";
 import { RootStackParamList } from "../../../core/navigation/types";
+import { selectEventFullDetails } from "../eventsSelectors";
 
 type EventDetailsRoute = RouteProp<RootStackParamList, "EventDetails">;
 
@@ -12,27 +13,9 @@ const EventDetailsScreen = () => {
   const route = useRoute<EventDetailsRoute>();
   const { eventId } = route.params;
 
-  const event = useSelector(
-    (state: RootState) => state.events.entities[eventId],
+  const event = useSelector((state: RootState) =>
+    selectEventFullDetails(state, eventId),
   );
-
-  const creator = useSelector((state: RootState) =>
-    event ? selectUserById(state, event.creatorId) : undefined,
-  );
-
-  // 👇 on transforme participants en array (propre pour FlatList)
-  const participants = useMemo(() => {
-    if (!event) return [];
-
-    return Object.entries(event.participants).map(([userId, status]) => ({
-      userId,
-      status,
-    }));
-  }, [event]);
-
-  const users = useSelector((state: RootState) => state.contacts.allProfiles);
-
-  const getUser = (id: string) => users.find((u) => u.id === id);
 
   if (!event) return null;
 
@@ -40,37 +23,30 @@ const EventDetailsScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>{event.title}</Text>
 
-      <Text>
-        Créé par : {creator?.firstName} {creator?.lastName}
-      </Text>
+      <Text>Créé par : {event.creator?.name}</Text>
 
       <Text>Date : {event.dateStart}</Text>
 
       <Text style={styles.subtitle}>Participants :</Text>
 
       <FlatList
-        data={participants}
-        keyExtractor={(item) => item.userId}
-        renderItem={({ item }) => {
-          const user = getUser(item.userId);
-
-          return (
-            <Text style={styles.participant}>
-              {user?.firstName} → {item.status}
-            </Text>
-          );
-        }}
+        data={event.participants}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Text style={styles.participant}>
+            {item.name} → {item.status}
+          </Text>
+        )}
       />
     </View>
   );
 };
 
-export default EventDetailsScreen;
-
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
-  section: { marginTop: 10, fontSize: 14 },
-  subtitle: { marginTop: 20, fontWeight: "bold" },
+  title: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
+  subtitle: { fontWeight: "bold", marginTop: 20 },
   participant: { marginTop: 5 },
 });
+
+export default EventDetailsScreen;

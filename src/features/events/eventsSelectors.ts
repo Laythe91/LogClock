@@ -18,26 +18,67 @@ export const selectFilteredEvents = createSelector(
   (events, userId, filter) => {
     if (!userId) return [];
 
-    switch (filter) {
-      case "created":
-        return events.filter((e) => e.creatorId === userId);
+    return events.filter((event) => {
+      const myStatus = event.participants?.[userId];
 
-      case "invited":
-        return events.filter(
-          (e) => e.creatorId !== userId && e.participants?.[userId],
-        );
+      switch (filter) {
+        case "created":
+          return event.creatorId === userId;
 
-      case "pending":
-        return events.filter((e) => e.participants?.[userId] === "pending");
+        case "invited":
+          return event.creatorId !== userId && !!myStatus;
 
-      case "accepted":
-        return events.filter((e) => e.participants?.[userId] === "accepted");
+        case "pending":
+          return myStatus === "pending";
 
-      case "declined":
-        return events.filter((e) => e.participants?.[userId] === "declined");
+        case "accepted":
+          return myStatus === "accepted";
 
-      default:
-        return [];
-    }
+        case "declined":
+          return myStatus === "declined";
+
+        default:
+          return false;
+      }
+    });
+  },
+);
+
+export const selectEventById = (state: RootState, eventId: string) =>
+  state.events.entities[eventId];
+
+export const selectEventFullDetails = createSelector(
+  [
+    (state: RootState, eventId: string) => state.events.entities[eventId],
+
+    (state: RootState) => state.contacts.profilesById,
+  ],
+  (event, profilesById) => {
+    if (!event) return null;
+
+    const participants = Object.entries(event.participants).map(
+      ([userId, status]) => {
+        const user = profilesById[userId];
+
+        return {
+          id: userId,
+          name: user ? `${user.firstName} ${user.lastName}` : "Unknown",
+          status,
+        };
+      },
+    );
+
+    const creator = profilesById[event.creatorId];
+
+    return {
+      ...event,
+      creator: creator
+        ? {
+            id: creator.id,
+            name: `${creator.firstName} ${creator.lastName}`,
+          }
+        : null,
+      participants,
+    };
   },
 );

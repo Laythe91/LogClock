@@ -20,7 +20,7 @@ const eventsSlice = createSlice({
   name: "events",
   initialState: hydratedState,
   reducers: {
-    setEvent: eventsAdapter.upsertOne,
+    addEvent: eventsAdapter.addOne,
 
     updateParticipantStatus: (
       state,
@@ -38,11 +38,8 @@ const eventsSlice = createSlice({
       }
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(logout, () => initialState);
-  },
 });
 
-export const { setEvent, updateParticipantStatus } = eventsSlice.actions;
+export const { addEvent, updateParticipantStatus } = eventsSlice.actions;
 export { eventsAdapter };
 export default eventsSlice.reducer;

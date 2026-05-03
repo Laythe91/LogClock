@@ -1,34 +1,27 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../core/store";
+import { ContactStatus } from "../../types/Contact";
 
 const selectContactsState = (state: RootState) => state.contacts;
 
-export const selectContactsByFilter = createSelector(
-  [selectContactsState, (_: RootState, filter: string) => filter],
-  (contactsState, filter) => {
-    const currentUserRelation = contactsState.usersRelations.find(
-      (user) => user.id === contactsState.currentUserId,
-    );
-
-    if (!currentUserRelation) return [];
-
-    const statusMap = currentUserRelation.contactsStatusCache;
-
-    const filteredUserIds = Object.entries(statusMap)
-      .filter(([, status]) => status === filter)
-      .map(([userId]) => userId);
-
-    return contactsState.allProfiles.filter((profile) =>
-      filteredUserIds.includes(profile.id),
-    );
-  },
-);
-
 export const selectUserById = (state: RootState, userId: string) =>
-  state.contacts.allProfiles.find((u) => u.id === userId);
+  state.contacts.profilesById[userId];
 
 export const selectUserFullName = (state: RootState, userId: string) => {
-  const user = state.contacts.allProfiles.find((u) => u.id === userId);
-  if (!user) return "Unknown";
-  return `${user.firstName} ${user.lastName}`;
+  const user = state.contacts.profilesById[userId];
+  return user ? `${user.firstName} ${user.lastName}` : "Unknown";
 };
+
+export const selectContactsByFilter = createSelector(
+  [
+    (state: RootState) => state.contacts.relations,
+    (state: RootState) => state.contacts.profilesById,
+    (_: RootState, filter: ContactStatus) => filter,
+  ],
+  (relations, profilesById, filter) => {
+    return Object.entries(relations)
+      .filter(([, status]) => status === filter)
+      .map(([userId]) => profilesById[userId])
+      .filter(Boolean);
+  },
+);

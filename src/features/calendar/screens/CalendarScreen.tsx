@@ -25,7 +25,7 @@ import "dayjs/locale/ko"; // coréen
 import "dayjs/locale/ru"; // russe
 import "dayjs/locale/hi";
 import { Event } from "../../../types/Event";
-import { addEvent } from "../../events/eventsSlice";
+import { eventsAdapter, addEvent } from "../../events/eventsSlice";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { setLocale } from "../../locales/localesSlice"; // ton slice Redux pour les langues
@@ -45,9 +45,11 @@ type MarkedDates = {
 
 const CalendarScreen = () => {
   const dispatch = useAppDispatch();
-  const events: Event[] = useSelector(
-    (state: RootState) => state.events.events,
-  );
+  const selectAllEvents = eventsAdapter.getSelectors(
+    (state: RootState) => state.events,
+  ).selectAll;
+
+  const events = useSelector(selectAllEvents);
   // appliquer la locale AVANT le render
   /*if (locales[current]) {
     LocaleConfig.locales["custom"] = locales[current];
@@ -81,44 +83,6 @@ const CalendarScreen = () => {
     // On force LocaleConfig à utiliser la langue actuelle
     LocaleConfig.defaultLocale = current;
   }, [current]);
-
-  useEffect(() => {
-    // On vérifie si les IDs de test existent déjà avant de dispatcher
-    const alreadyHasMocks = events.some((ev) => ev.id === "1" || ev.id === "2");
-
-    if (!alreadyHasMocks) {
-      dispatch(
-        addEvent({
-          id: "1",
-          title: "Réunion Aujourd'hui",
-          dateStart: dayjs().hour(13).minute(0).second(0).toISOString(),
-          dateEnd: dayjs().hour(14).minute(0).second(0).toISOString(),
-          description: "Test calendrier pour aujourd'hui",
-          participants: [],
-        }),
-      );
-      dispatch(
-        addEvent({
-          id: "2",
-          title: "Réunion dans une semaine",
-          dateStart: dayjs()
-            .add(1, "week")
-            .hour(13)
-            .minute(0)
-            .second(0)
-            .toISOString(),
-          dateEnd: dayjs()
-            .add(1, "day")
-            .hour(19)
-            .minute(0)
-            .second(0)
-            .toISOString(),
-          description: "Test calendrier pour la semaine prochaine",
-          participants: [],
-        }),
-      );
-    }
-  }, [dispatch, events]);
 
   // Filtrer les événements pour la date sélectionnée
   const eventsForSelectedDate = events.filter(
@@ -182,7 +146,7 @@ const CalendarScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Calendar
         key={current} // Crucial : Force le re-render complet pour changer les noms des jours
         hideExtraDays={true}
@@ -258,7 +222,7 @@ const CalendarScreen = () => {
         }
         extraData={current}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

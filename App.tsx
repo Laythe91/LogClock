@@ -108,30 +108,6 @@ const MainTabs = createBottomTabNavigator({
         ),
       },
     },
-    Contacts: {
-      screen: ContactsScreen,
-      options: {
-        title: "Contacts",
-        tabBarLabel: "Contacts",
-        tabBarActiveTintColor: "white", // sélectionné
-        tabBarInactiveTintColor: "black", // non sélectionné
-        /*        headerStyle: {
-          backgroundColor:
-            Platform.OS === "ios" ? colors.lightBrown : colors.darkGrey,
-        },
-        // 2. On définit la couleur du texte du titre (optionnel)
-        headerTintColor: Platform.OS === "ios" ? colors.white : colors.white,
-        tabBarLabel: "Sélection",
-        tabBarStyle: {
-          backgroundColor:
-            Platform.OS === "ios" ? colors.white : colors.darkGrey,
-        },
-        */
-        tabBarIcon: ({ size, color }) => (
-          <AntDesign name="contacts" size={size} color={color} />
-        ),
-      },
-    },
   },
 });
 
@@ -207,8 +183,17 @@ const MyDrawer = createDrawerNavigator({
       screen: EventsStack,
       options: {
         title: "Events",
+        drawerIcon: ({ color, size }) => (
+          <MaterialIcons name="event-note" size={size} color={color} />
+        ),
+      },
+    },
+    Calendar: {
+      screen: CalendarScreen,
+      options: {
+        title: "Calendar",
         drawerIcon: ({ color }) => (
-          <MaterialIcons name="event-note" size={24} color={color} />
+          <MaterialIcons name="calendar-month" size={24} color={color} />
         ),
       },
     },

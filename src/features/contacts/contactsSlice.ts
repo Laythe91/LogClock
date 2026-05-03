@@ -1,16 +1,38 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ContactStatus } from "../../types/Contact";
 import DATA from "../../data";
 
 interface ContactsState {
-  allProfiles: any[];
-  usersRelations: any[];
   currentUserId: string;
+
+  relations: Record<string, "accepted" | "pending" | "blocked" | "refused">;
+
+  profilesById: Record<
+    string,
+    {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      profileImage: string;
+    }
+  >;
 }
 
+const currentUser = DATA.users.find((u) => u.id === "user1");
+
+const profilesById = Object.fromEntries(
+  DATA.userProfiles.map((p) => [p.id, p]),
+);
+
 const initialState: ContactsState = {
-  allProfiles: DATA.userProfiles,
-  usersRelations: DATA.users,
   currentUserId: "user1",
+  relations: (currentUser?.contactsStatusCache ?? {}) as Record<
+    string,
+    ContactStatus
+  >,
+  profilesById,
 };
 
 const contactsSlice = createSlice({
@@ -24,14 +46,7 @@ const contactsSlice = createSlice({
         status: "accepted" | "pending" | "blocked" | "refused";
       }>,
     ) => {
-      const currentUserRelation = state.usersRelations.find(
-        (user) => user.id === state.currentUserId,
-      );
-
-      if (!currentUserRelation) return;
-
-      currentUserRelation.contactsStatusCache[action.payload.targetId] =
-        action.payload.status;
+      state.relations[action.payload.targetId] = action.payload.status;
     },
   },
 });
