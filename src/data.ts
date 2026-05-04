@@ -145,6 +145,23 @@ const DATA = {
       },
     },
     {
+      id: "event-1879-pecsec",
+      creatorId: "user1",
+      title: "Repas solo",
+      description: "Déjeuner entre amis pour discuter du projet",
+      dateStart: "2026-05-08T20:00:00.000Z",
+      dateEnd: "2026-05-08T22:00:00.000Z",
+      location: {
+        lat: 48.8566,
+        lng: 2.3522,
+      },
+      participants: {
+        user1: "accepted",
+        user2: "declined",
+        user3: "pending",
+      },
+    },
+    {
       id: "event-2222-bbbb",
       creatorId: "user2",
       title: "Soirée Pizza",

@@ -5,6 +5,7 @@ import DATA from "../../data";
 import { FullUserData } from "../../types/User";
 import { useSelector } from "react-redux";
 import { RootState } from "../../core/store";
+import { selectInvitedEventsCount } from "../events/eventsSelectors";
 
 const ProfileScreen = () => {
   // ✅ userId vient maintenant de Redux (auth)
@@ -27,9 +28,8 @@ const ProfileScreen = () => {
   } as unknown as FullUserData;
 
   // ✅ EVENTS (safe, inchangé)
-  const totalEvents =
-    (user.myEvents?.created?.length ?? 0) +
-    (user.myEvents?.invited?.length ?? 0);
+
+  const totalEvents = useSelector(selectInvitedEventsCount);
 
   // ✅ FRIENDS (structure map userId -> status)
   const friendsCount = Object.values(user.contactsStatusCache ?? {}).filter(

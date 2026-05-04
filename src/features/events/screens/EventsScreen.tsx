@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../core/store";
-import { selectFilteredEvents } from "../eventsSelectors";
-import { RootStackParamList } from "../../../core/navigation/types";
+import { selectMyEventsWithFilter } from "../eventsSelectors";
+import { RootStackParamList } from "../../../types/Event";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { EventFilter } from "../../../types/Event";
 // Assure-toi d'importer ton type
@@ -17,16 +17,15 @@ const EventsScreen = () => {
   const route = useRoute<EventsRouteProp>();
   const { filter } = route.params;
 
-  // Utilisation du type EventFilter pour garantir le bon filtrage
   const events = useSelector((state: RootState) =>
-    selectFilteredEvents(state, filter as EventFilter),
+    selectMyEventsWithFilter(state, filter),
   );
 
   const navigation = useNavigation<NavProp>();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{filter.toUpperCase()}</Text>
+      <Text style={styles.title}>EVENTS</Text>
 
       <FlatList
         data={events}
@@ -48,7 +47,6 @@ const EventsScreen = () => {
     </View>
   );
 };
-
 export default EventsScreen;
 
 const styles = StyleSheet.create({

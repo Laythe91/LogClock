@@ -4,7 +4,7 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../core/store";
 import { selectUserById } from "../../contacts/contactsSelectors";
-import { RootStackParamList } from "../../../core/navigation/types";
+import { RootStackParamList } from "../../../types/Event";
 import { selectEventFullDetails } from "../eventsSelectors";
 
 type EventDetailsRoute = RouteProp<RootStackParamList, "EventDetails">;

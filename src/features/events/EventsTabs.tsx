@@ -1,5 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import {
+  FontAwesome6,
+  MaterialIcons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import EventsScreen from "./screens/EventsScreen";
 
 const EventsTabs = createBottomTabNavigator({
@@ -19,7 +23,11 @@ const EventsTabs = createBottomTabNavigator({
       options: {
         tabBarLabel: "Créé",
         tabBarIcon: ({ size, color }) => (
-          <MaterialIcons name="add-task" size={size} color={color} />
+          <MaterialCommunityIcons
+            name="receipt-text-send"
+            size={size}
+            color={color}
+          />
         ),
       },
     },
@@ -30,7 +38,11 @@ const EventsTabs = createBottomTabNavigator({
       options: {
         tabBarLabel: "Invité",
         tabBarIcon: ({ size, color }) => (
-          <MaterialIcons name="add" size={size} color={color} />
+          <MaterialCommunityIcons
+            name="receipt-text-arrow-left"
+            size={size}
+            color={color}
+          />
         ),
       },
     },

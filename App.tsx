@@ -161,7 +161,7 @@ const MyDrawer = createDrawerNavigator({
       screen: ProfileScreen,
       options: {
         title: "My profile",
-        drawerIcon: ({ color }) => (
+        drawerIcon: ({ color, size }) => (
           <MaterialIcons name="account-circle" size={24} color={color} />
         ),
       },
@@ -170,10 +170,10 @@ const MyDrawer = createDrawerNavigator({
       screen: ContactsTabs,
       options: {
         title: "Amis",
-        drawerIcon: ({ color }) => (
+        drawerIcon: ({ color, size }) => (
           <MaterialIcons
             name="supervised-user-circle"
-            size={24}
+            size={size}
             color={color}
           />
         ),
@@ -192,8 +192,8 @@ const MyDrawer = createDrawerNavigator({
       screen: CalendarScreen,
       options: {
         title: "Calendar",
-        drawerIcon: ({ color }) => (
-          <MaterialIcons name="calendar-month" size={24} color={color} />
+        drawerIcon: ({ color, size }) => (
+          <MaterialIcons name="calendar-month" size={size} color={color} />
         ),
       },
     },
@@ -201,10 +201,10 @@ const MyDrawer = createDrawerNavigator({
       screen: MainTabs,
       options: {
         title: "TabTEST",
-        drawerIcon: ({ color }) => (
+        drawerIcon: ({ color, size }) => (
           <MaterialCommunityIcons
             name="account-box-outline"
-            size={24}
+            size={size}
             color={color}
           />
         ),

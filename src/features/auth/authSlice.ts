@@ -8,7 +8,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  userId: "user1",
+  userId: "user2",
   token: null,
   isLoggedIn: false,
 };

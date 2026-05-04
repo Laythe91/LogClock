@@ -20,7 +20,7 @@ interface ContactsState {
   >;
 }
 
-const currentUser = DATA.users.find((u) => u.id === "user1");
+const currentUser = DATA.users.find((u) => u.id === "user2");
 
 const profilesById = Object.fromEntries(
   DATA.userProfiles.map((p) => [p.id, p]),

@@ -1,3 +1,5 @@
+import { ContactStatus } from "./Contact";
+
 export type ParticipantStatus = "accepted" | "pending" | "declined";
 
 export interface Event {
@@ -19,9 +21,13 @@ export interface Event {
   };
 }
 // Comme ton ContactFilter
-export type EventFilter =
-  | "created"
-  | "invited"
-  | "pending"
-  | "accepted"
-  | "declined";
+export type EventFilter = {
+  type?: "created" | "invited";
+  status?: ParticipantStatus;
+};
+
+export type RootStackParamList = {
+  Events: { filter: EventFilter };
+  EventDetails: { eventId: string };
+  Contacts: { filter: ContactStatus };
+};
