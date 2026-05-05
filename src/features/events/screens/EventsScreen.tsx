@@ -16,6 +16,9 @@ type NavProp = NativeStackNavigationProp<RootStackParamList, "Events">;
 const EventsScreen = () => {
   const route = useRoute<EventsRouteProp>();
   const { filter } = route.params;
+  console.log(route.params);
+
+  console.log(filter);
 
   const events = useSelector((state: RootState) =>
     selectMyEventsWithFilter(state, filter),
@@ -36,6 +39,7 @@ const EventsScreen = () => {
             onPress={() =>
               navigation.navigate("EventDetails", {
                 eventId: item.id,
+                filter,
               })
             }
           >

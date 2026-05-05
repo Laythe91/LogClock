@@ -8,6 +8,7 @@ import LoginScreen from "./src/features/auth/screens/LoginScreen";
 import LanguageScreen from "./src/features/locales/LanguageScreen";
 import { createStaticNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -194,6 +195,15 @@ const MyDrawer = createDrawerNavigator({
         title: "Calendar",
         drawerIcon: ({ color, size }) => (
           <MaterialIcons name="calendar-month" size={size} color={color} />
+        ),
+      },
+    },
+    Language: {
+      screen: LanguageScreen,
+      options: {
+        title: "Languages",
+        drawerIcon: ({ color, size }) => (
+          <Ionicons name="language" size={size} color={color} />
         ),
       },
     },

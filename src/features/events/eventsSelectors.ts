@@ -1,7 +1,11 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../core/store";
 import { eventsAdapter } from "./eventsSlice";
-import { EventFilter, ParticipantStatus } from "../../types/Event";
+import {
+  EventFilter,
+  ParticipantStatus,
+  MainEventFilter,
+} from "../../types/Event";
 
 const selectors = eventsAdapter.getSelectors<RootState>(
   (state) => state.events,
@@ -62,7 +66,7 @@ export const selectMyEventsWithFilter = createSelector(
   [
     selectors.selectAll,
     (state: RootState) => state.auth.userId,
-    (_: RootState, filter: EventFilter) => filter,
+    (_: RootState, filter: MainEventFilter) => filter,
   ],
   (events, userId, filter) => {
     if (!userId) return [];
@@ -72,15 +76,15 @@ export const selectMyEventsWithFilter = createSelector(
       const myStatus = event.participants?.[userId];
 
       // 🔹 TYPE FILTER
-      if (filter.type === "created" && !isCreator) return false;
-      if (filter.type === "invited" && isCreator) return false;
+      if (filter === "created" && !isCreator) return false;
+      if (filter === "invited" && isCreator) return false;
 
       // 🔹 STATUS FILTER (uniquement si participant)
-      if (filter.status) {
+      /* if (filter.status) {
         if (!myStatus) return false;
         if (myStatus !== filter.status) return false;
       }
-
+*/
       return true;
     });
   },

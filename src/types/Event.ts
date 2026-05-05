@@ -21,13 +21,23 @@ export interface Event {
   };
 }
 // Comme ton ContactFilter
+
+export type MainEventFilter = "created" | "invited";
+
 export type EventFilter = {
   type?: "created" | "invited";
   status?: ParticipantStatus;
 };
 
 export type RootStackParamList = {
-  Events: { filter: EventFilter };
-  EventDetails: { eventId: string };
-  Contacts: { filter: ContactStatus };
+  Events: { filter: MainEventFilter };
+  EventDetails: { eventId: string; filter?: MainEventFilter };
+  Contacts: { filter: ParticipantStatus };
 };
+
+/*export type RootStackParamList = {
+  Events: { filter: EventFilter };
+  EventDetails: { eventId: string; filter?: EventFilter };
+  Contacts: { filter: ParticipantStatus };
+};
+*/

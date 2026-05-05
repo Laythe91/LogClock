@@ -52,7 +52,7 @@ const DATA = {
         user4: "blocked",
       },
       myEvents: {
-        created: ["event-1111-aaaa"],
+        created: ["event-1111-aaaa", "event-14571-acaa", "event-1879-pecsec"],
         invited: ["event-2222-bbbb", "event-3333-cccc"],
       },
     },
@@ -69,7 +69,12 @@ const DATA = {
       },
       myEvents: {
         created: ["event-2222-bbbb"],
-        invited: ["event-1111-aaaa", "event-3333-cccc"],
+        invited: [
+          "event-1111-aaaa",
+          "event-3333-cccc",
+          "event-14571-acaa",
+          "event-1879-pecsec",
+        ],
       },
     },
     {
@@ -86,7 +91,7 @@ const DATA = {
       },
       myEvents: {
         created: ["event-3333-cccc"],
-        invited: ["event-1111-aaaa"],
+        invited: ["event-1111-aaaa", "event-14571-acaa", "event-1879-pecsec"],
       },
     },
     {
@@ -139,9 +144,9 @@ const DATA = {
         lng: 2.3522,
       },
       participants: {
-        user1: "accepted",
         user2: "declined",
         user3: "pending",
+        user4: "accepted",
       },
     },
     {
@@ -156,9 +161,9 @@ const DATA = {
         lng: 2.3522,
       },
       participants: {
-        user1: "accepted",
         user2: "declined",
         user3: "pending",
+        user4: "accepted",
       },
     },
     {
@@ -175,6 +180,7 @@ const DATA = {
       participants: {
         user1: "accepted",
         user2: "accepted",
+        user3: "accepted",
         user4: "pending",
       },
     },
@@ -190,7 +196,7 @@ const DATA = {
         lng: 2.3499,
       },
       participants: {
-        user3: "accepted",
+        user4: "accepted",
         user1: "pending",
         user2: "accepted",
       },
