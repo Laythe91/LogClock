@@ -5,19 +5,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../core/store";
 import { ParticipantStatus, RootStackParamList } from "../../../types/Event";
 import EventParticipantItem from "../components/EventParticipantsItem";
-import ConfirmModal from "../components/ConfirmModal";
-
 import {
   selectEventFullDetails,
   selectParticipantsByStatus,
 } from "../eventsSelectors";
+import ConfirmModal from "../components/ConfirmModal";
 
 type EventDetailsRoute = RouteProp<RootStackParamList, "EventDetails">;
-
-const STATUS_OPTIONS = [
-  { value: "accepted", label: "Accepté" },
-  { value: "declined", label: "Refusé" },
-];
 
 type ConfirmAction = "accept" | "decline" | "delete";
 
@@ -27,23 +21,9 @@ const EventDetailsScreen = () => {
 
   const route = useRoute<EventDetailsRoute>();
   const { eventId, filter } = route.params;
-  const event = useSelector((state: RootState) =>
-    selectEventFullDetails(state, eventId),
-  );
-
-  const participants = useSelector((state: RootState) =>
-    selectParticipantsByStatus(state, eventId, activeStatus),
-  );
 
   const isInvitedView = filter === "invited";
   const isOwnerView = filter === "created";
-
-  // 🔥 séparation current user / autres
-  const currentUserParticipant = participants.find(
-    (p) => p.id === currentUserId,
-  );
-
-  const otherParticipants = participants.filter((p) => p.id !== currentUserId);
 
   const [activeStatus, setActiveStatus] = useState<
     ParticipantStatus | undefined
@@ -54,12 +34,6 @@ const EventDetailsScreen = () => {
   const [pendingAction, setPendingAction] = useState<ConfirmAction | null>(
     null,
   );
-
-  const openConfirm = (action: ConfirmAction) => {
-    console.log("OPEN MODAL:", action);
-    setPendingAction(action);
-    setModalVisible(true);
-  };
 
   const handleStatusPress = (status: "accepted" | "declined") => {
     if (!currentUserParticipant) return;
@@ -74,6 +48,12 @@ const EventDetailsScreen = () => {
     openConfirm(actionMap[status]);
   };
 
+  const openConfirm = (action: typeof pendingAction) => {
+    console.log("OPEN MODAL:", action);
+    setPendingAction(action);
+    setModalVisible(true);
+  };
+
   const confirmAction = () => {
     if (!pendingAction) return;
 
@@ -85,8 +65,6 @@ const EventDetailsScreen = () => {
     setPendingAction(null);
   };
 
-  console.log("MODAL:", modalVisible);
-
   const tabs: { label: string; value?: ParticipantStatus }[] = [
     { label: "All", value: undefined },
     { label: "Going", value: "accepted" },
@@ -94,7 +72,22 @@ const EventDetailsScreen = () => {
     { label: "Declined", value: "declined" },
   ];
 
+  const event = useSelector((state: RootState) =>
+    selectEventFullDetails(state, eventId),
+  );
+
+  const participants = useSelector((state: RootState) =>
+    selectParticipantsByStatus(state, eventId, activeStatus),
+  );
+
   if (!event) return null;
+
+  // 🔥 séparation current user / autres
+  const currentUserParticipant = participants.find(
+    (p) => p.id === currentUserId,
+  );
+
+  const otherParticipants = participants.filter((p) => p.id !== currentUserId);
 
   return (
     <View style={styles.container}>
@@ -137,15 +130,25 @@ const EventDetailsScreen = () => {
 
           <View style={styles.ownerActions}>
             <Pressable
-              style={[styles.ownerBtn, styles.editBtn]}
+              style={({ pressed }) => [
+                styles.ownerBtn,
+                styles.editBtn,
+                pressed && styles.ownerPressed,
+              ]}
               onPress={() => console.log("EDIT EVENT")}
             >
               <Text style={styles.ownerText}>Modifier</Text>
             </Pressable>
 
             <Pressable
-              style={[styles.ownerBtn, styles.deleteBtn]}
-              onPress={() => openConfirm("delete")}
+              style={({ pressed }) => [
+                styles.ownerBtn,
+                styles.deleteBtn,
+                pressed && styles.ownerPressed,
+              ]}
+              onPress={() => {
+                openConfirm("delete");
+              }}
             >
               <Text style={styles.ownerText}>Annuler</Text>
             </Pressable>
@@ -292,10 +295,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
-  optionPressed: {
-    opacity: 0.6,
-    transform: [{ scale: 0.97 }],
-  },
+
   // 🟢 accepté actif
   optionAccepted: {
     backgroundColor: "#2ecc71",
@@ -352,6 +352,14 @@ const styles = StyleSheet.create({
   ownerText: {
     color: "white",
     fontWeight: "bold",
+  },
+  optionPressed: {
+    opacity: 0.6,
+    transform: [{ scale: 0.97 }],
+  },
+  ownerPressed: {
+    opacity: 0.6,
+    transform: [{ scale: 0.97 }],
   },
 });
 export default EventDetailsScreen;
