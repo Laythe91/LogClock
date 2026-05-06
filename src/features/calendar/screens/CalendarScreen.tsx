@@ -24,8 +24,8 @@ import "dayjs/locale/zh"; // chinois
 import "dayjs/locale/ko"; // coréen
 import "dayjs/locale/ru"; // russe
 import "dayjs/locale/hi";
-import { Event } from "../../../types/Event";
-import { eventsAdapter, addEvent } from "../../events/eventsSlice";
+import { AppEvent } from "../../../types/Event";
+import { eventsAdapter } from "../../events/eventsSlice";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -90,7 +90,7 @@ const CalendarScreen = () => {
     (ev) => dayjs(ev.dateStart).format("YYYY-MM-DD") === selectedDate,
   );
 
-  const eventsByDate: Record<string, Event[]> = {};
+  const eventsByDate: Record<string, AppEvent[]> = {};
 
   events.forEach((ev) => {
     const key = dayjs(ev.dateStart).format("YYYY-MM-DD");
@@ -133,7 +133,7 @@ const CalendarScreen = () => {
     monthTextColor: "#1E90FF", // Couleur du nom du mois
   };
 
-  const renderItem: ListRenderItem<Event> = ({ item }) => {
+  const renderItem: ListRenderItem<AppEvent> = ({ item }) => {
     return (
       <View style={styles.eventCard}>
         <Text style={styles.eventTitle}>{item.title}</Text>

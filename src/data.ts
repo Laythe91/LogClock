@@ -1,4 +1,4 @@
-import { Event } from "./types/Event";
+import { ApiEvent } from "./types/Event";
 
 const DATA = {
   // 1. Profils publics
@@ -122,6 +122,8 @@ const DATA = {
       description: "Déjeuner entre amis pour discuter du projet",
       dateStart: "2026-05-08T13:00:00.000Z",
       dateEnd: "2026-05-08T14:00:00.000Z",
+      allDay: false,
+
       location: {
         lat: 48.8566,
         lng: 2.3522,
@@ -139,6 +141,8 @@ const DATA = {
       description: "Déjeuner entre amis pour discuter du projet",
       dateStart: "2026-05-08T15:00:00.000Z",
       dateEnd: "2026-05-08T17:00:00.000Z",
+      allDay: false,
+
       location: {
         lat: 48.8566,
         lng: 2.3522,
@@ -156,6 +160,7 @@ const DATA = {
       description: "Déjeuner entre amis pour discuter du projet",
       dateStart: "2026-05-08T20:00:00.000Z",
       dateEnd: "2026-05-08T22:00:00.000Z",
+      allDay: false,
       location: {
         lat: 48.8566,
         lng: 2.3522,
@@ -173,6 +178,8 @@ const DATA = {
       description: "Soirée pizza chez Alice",
       dateStart: "2026-05-15T19:00:00.000Z",
       dateEnd: "2026-05-15T21:00:00.000Z",
+      allDay: false,
+
       location: {
         lat: 48.8647,
         lng: 2.349,
@@ -191,6 +198,8 @@ const DATA = {
       description: "Petite randonnée pour se détendre",
       dateStart: "2026-05-10T09:00:00.000Z",
       dateEnd: "2026-05-10T12:00:00.000Z",
+      allDay: false,
+
       location: {
         lat: 48.853,
         lng: 2.3499,
@@ -201,7 +210,7 @@ const DATA = {
         user2: "accepted",
       },
     },
-  ] as Event[],
+  ] as ApiEvent[],
 };
 
 export default DATA;

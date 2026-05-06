@@ -25,3 +25,17 @@ export const selectContactsByFilter = createSelector(
       .filter(Boolean);
   },
 );
+
+export const selectInvitableContacts = createSelector(
+  [
+    (state: RootState) => state.contacts.relations,
+    (state: RootState) => state.contacts.profilesById,
+    (state: RootState) => state.contacts.currentUserId,
+  ],
+  (relations, profilesById, currentUserId) => {
+    return Object.entries(relations)
+      .filter(([id, status]) => status === "accepted" && id !== currentUserId)
+      .map(([id]) => profilesById[id])
+      .filter(Boolean);
+  },
+);

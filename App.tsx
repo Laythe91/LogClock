@@ -20,6 +20,7 @@ import { DrawerActions } from "@react-navigation/native";
 import ProfileScreen from "./src/features/user/UserScreen";
 import EventsTabs from "./src/features/events/EventsTabs";
 import EventDetailsScreen from "./src/features/events/screens/EventDetailsScreen";
+import EventFormScreen from "./src/features/events/screens/EventFormScreen";
 
 const MainTabs = createBottomTabNavigator({
   screenOptions: {
@@ -133,6 +134,15 @@ const EventsStack = createNativeStackNavigator({
       screen: EventDetailsScreen,
       options: {
         title: "Détails event",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+    EventCreate: {
+      screen: EventFormScreen,
+      options: {
+        title: "New event",
+        //presentation: "transparentModal",
+        animation: "slide_from_bottom",
         headerShown: false, // 🔥 IMPORTANT
       },
     },

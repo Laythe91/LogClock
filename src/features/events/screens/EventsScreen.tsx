@@ -55,7 +55,7 @@ const EventsScreen = () => {
       />
       {filter === "created" && (
         <Pressable
-          onPress={() => console.log("Add event")}
+          onPress={() => navigation.navigate("EventCreate")}
           style={({ pressed }) => [styles.fab, pressed && styles.buttonPressed]}
         >
           <MaterialIcons name="add" size={28} color="white" />
