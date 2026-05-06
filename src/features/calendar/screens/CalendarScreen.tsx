@@ -28,6 +28,7 @@ import { Event } from "../../../types/Event";
 import { eventsAdapter, addEvent } from "../../events/eventsSlice";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { setLocale } from "../../locales/localesSlice"; // ton slice Redux pour les langues
 import { LocaleKey } from "../../locales/localesSlice";
 
@@ -146,7 +147,7 @@ const CalendarScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Calendar
         key={current} // Crucial : Force le re-render complet pour changer les noms des jours
         hideExtraDays={true}
@@ -222,7 +223,14 @@ const CalendarScreen = () => {
         }
         extraData={current}
       />
-    </View>
+
+      <Pressable
+        onPress={() => console.log("Add event")}
+        style={({ pressed }) => [styles.fab, pressed && styles.buttonPressed]}
+      >
+        <MaterialIcons name="add" size={28} color="white" />
+      </Pressable>
+    </SafeAreaView>
   );
 };
 
@@ -230,27 +238,13 @@ export default CalendarScreen;
 
 // --- Styles ---
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#fff" },
-  languageSwitcher: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 12,
+  container: {
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: "#fff",
   },
-  langButton: {
-    marginHorizontal: 8,
-    padding: 6,
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: "#aaa",
-  },
-  langText: { color: "#333" },
-  langSelected: {
-    color: "#fff",
-    fontWeight: "bold",
-    backgroundColor: "#1E90FF",
-    paddingHorizontal: 4,
-    borderRadius: 4,
-  },
+
   monthText: {
     fontSize: 10,
     fontWeight: "bold",
@@ -290,4 +284,20 @@ const styles = StyleSheet.create({
   selectedText: { color: "white", fontWeight: "bold" },
   todayText: { color: "#FF6347", fontWeight: "bold" },
   disabledText: { color: "#ccc" },
+  buttonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.94 }],
+  },
+  fab: {
+    position: "absolute",
+    bottom: 90, // au-dessus de la tab bar
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "royalblue",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
 });

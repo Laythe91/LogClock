@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { selectContactsByFilter } from "../contactsSelectors";
 import { RootState } from "../../../core/store";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const ContactsScreen = () => {
   const route = useRoute<any>();
@@ -52,6 +53,12 @@ const ContactsScreen = () => {
           </Text>
         }
       />
+      <Pressable
+        onPress={() => console.log("Add contact")}
+        style={({ pressed }) => [styles.fab, pressed && styles.buttonPressed]}
+      >
+        <MaterialIcons name="person-add" size={28} color="white" />
+      </Pressable>
 
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
@@ -88,5 +95,21 @@ const styles = StyleSheet.create({
     marginTop: 50,
     fontSize: 16,
     color: "#888",
+  },
+  buttonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.94 }],
+  },
+  fab: {
+    position: "absolute",
+    bottom: 50, // au-dessus de la tab bar
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "royalblue",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
   },
 });

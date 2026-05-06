@@ -23,7 +23,11 @@ const ContactCard = ({ contact, onClose }: ContactCardProps) => {
 
       <View style={styles.buttonContainer}>
         <Pressable
-          style={[styles.button, styles.closeButton]}
+          style={({ pressed }) => [
+            styles.button,
+            styles.closeButton,
+            pressed && styles.buttonPressed,
+          ]}
           onPress={onClose}
         >
           <Text style={styles.buttonText}>Fermer</Text>
@@ -82,5 +86,9 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: "600",
     color: "#333",
+  },
+  buttonPressed: {
+    opacity: 0.6,
+    transform: [{ scale: 0.95 }],
   },
 });

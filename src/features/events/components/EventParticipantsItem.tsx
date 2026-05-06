@@ -18,6 +18,11 @@ const statusColor = {
   declined: "#e74c3c",
 };
 
+const STATUS_OPTIONS = [
+  { value: "accepted", label: "Accepté" },
+  { value: "declined", label: "Refusé" },
+];
+
 const EventParticipantItem = ({ item, currentUserId, canLeave }: Props) => {
   const getInitials = (name: string) =>
     name

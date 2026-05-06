@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setLocale, LocaleKey } from "./localesSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export interface LanguageOption {
   id: LocaleKey;
@@ -40,7 +41,7 @@ const LanguageScreen = () => {
   const t = translations[current];
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* 3. On remplace les textes en dur par les variables du slice */}
       <Text style={styles.title}>{t.langSelect}</Text>
 
@@ -80,7 +81,7 @@ const LanguageScreen = () => {
 
         <Text style={styles.hint}>{t.timezoneDetail}</Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

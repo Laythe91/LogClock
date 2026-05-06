@@ -6,6 +6,8 @@ import { RootState } from "../../../core/store";
 import { selectMyEventsWithFilter } from "../eventsSelectors";
 import { RootStackParamList } from "../../../types/Event";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
 import { EventFilter } from "../../../types/Event";
 // Assure-toi d'importer ton type
 
@@ -45,9 +47,20 @@ const EventsScreen = () => {
           >
             <Text style={styles.titleEvent}>{item.title}</Text>
             <Text>{item.description}</Text>
+            <Text>
+              {item.dateStart} - {item.dateEnd}
+            </Text>
           </Pressable>
         )}
       />
+      {filter === "created" && (
+        <Pressable
+          onPress={() => console.log("Add event")}
+          style={({ pressed }) => [styles.fab, pressed && styles.buttonPressed]}
+        >
+          <MaterialIcons name="add" size={28} color="white" />
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -66,5 +79,21 @@ const styles = StyleSheet.create({
   titleEvent: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  buttonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.94 }],
+  },
+  fab: {
+    position: "absolute",
+    bottom: 90, // au-dessus de la tab bar
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "royalblue",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
   },
 });
