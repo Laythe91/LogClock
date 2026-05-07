@@ -1,36 +1,19 @@
 // src/features/events/eventsThunks.ts
-
 import { AppDispatch, RootState } from "../../core/store";
-import { addEvent, removeEvent, createEvent } from "./eventsSlice";
+import { addEvent, removeEvent, updateEventAction } from "./eventsSlice";
+import { eventsApi } from "../../services/api/events.api";
 import { eventMapper } from "./event.mapper";
-import { eventsApi } from "./eventsApi";
-import { EventForm, ParticipantStatus, AppEvent } from "../../types/Event";
+import { EventForm, AppEvent } from "../../types/Event";
 import uuid from "react-native-uuid";
 
 export const createEvent =
   (form: EventForm) =>
   async (dispatch: AppDispatch, getState: () => RootState) => {
-    const { auth } = getState();
-    const userId = auth.userId;
-
+    const userId = getState().auth.userId;
     if (!userId) return;
 
-    // 1. ID temporaire
     const tempId = uuid.v4() as string;
 
-    // 2. participants → map object
-    const participants: Record<string, ParticipantStatus> = {
-      [userId]: "accepted",
-      ...form.participants.reduce<Record<string, ParticipantStatus>>(
-        (acc, id) => {
-          acc[id] = "pending";
-          return acc;
-        },
-        {},
-      ),
-    };
-
-    // 3. EVENT OPTIMISTIC (Redux state)
     const optimisticEvent: AppEvent = {
       id: tempId,
       creatorId: userId,
@@ -40,35 +23,91 @@ export const createEvent =
       dateEnd: form.dateEnd,
       allDay: form.allDay,
       location: form.location,
-      participants,
+      participants: {
+        [userId]: "accepted",
+        ...Object.fromEntries(form.participants.map((id) => [id, "pending"])),
+      },
     };
 
-    // 4. Optimistic update UI
+    // 1. optimistic UI
     dispatch(addEvent(optimisticEvent));
-
-    console.log("🟢 OPTIMISTIC ADD:", optimisticEvent);
-    console.log("STATE AFTER ADD:", getState().events);
+    console.log("EVENT AJOUTÉ AU STORE :", optimisticEvent);
+    console.log("STATE EVENTS :", getState().events);
 
     try {
-      // 5. API CALL
+      // 2. API call
       const apiPayload = eventMapper.toApi(optimisticEvent);
       const saved = await eventsApi.createEvent(apiPayload);
 
-      // 6. NORMALISATION BACK
       const normalized = eventMapper.fromApi(saved);
 
-      // 7. REPLACE TEMP EVENT
+      // 3. replace temp event
       dispatch(removeEvent(tempId));
       dispatch(addEvent(normalized));
-
-      console.log("🟢 EVENT SAVED:", normalized);
-      console.log("STATE FINAL:", getState().events);
-    } catch (error) {
-      // 8. ROLLBACK
-      console.error("🔴 API ERROR → rollback", error);
-
+    } catch (err) {
+      // rollback
       dispatch(removeEvent(tempId));
+      console.log("ERREUR API -> rollback", tempId);
+      console.log("STATE EVENTS :", getState().events);
+    }
+  };
 
-      console.log("STATE AFTER ROLLBACK:", getState().events);
+export const updateEvent =
+  (eventId: string, updates: Partial<AppEvent>) =>
+  async (dispatch: AppDispatch, getState: () => RootState) => {
+    const previous = getState().events.entities[eventId];
+
+    if (!previous) return;
+
+    // optimistic update
+    dispatch(
+      updateEventAction({
+        id: eventId,
+        changes: updates,
+      }),
+    );
+
+    try {
+      const merged = {
+        ...previous,
+        ...updates,
+      };
+
+      const apiPayload = eventMapper.toApi(merged);
+
+      const saved = await eventsApi.updateEvent(eventId, apiPayload);
+
+      dispatch(
+        updateEventAction({
+          id: eventId,
+          changes: eventMapper.fromApi(saved),
+        }),
+      );
+    } catch {
+      // rollback
+      dispatch(
+        updateEventAction({
+          id: eventId,
+          changes: previous,
+        }),
+      );
+    }
+  };
+
+export const deleteEvent =
+  (eventId: string) =>
+  async (dispatch: AppDispatch, getState: () => RootState) => {
+    const previous = getState().events.entities[eventId];
+
+    if (!previous) return;
+
+    // optimistic remove
+    dispatch(removeEvent(eventId));
+
+    try {
+      await eventsApi.deleteEvent(eventId);
+    } catch {
+      // rollback
+      dispatch(addEvent(previous));
     }
   };

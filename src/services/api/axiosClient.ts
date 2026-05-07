@@ -6,3 +6,10 @@ export const apiClient = axios.create({
 });*/
 
 // AXIOS OU RTK QUERY
+// src/api/axiosClient.ts
+import axios from "axios";
+
+export const axiosClient = axios.create({
+  baseURL: "https://your-api.com",
+  timeout: 10000,
+});

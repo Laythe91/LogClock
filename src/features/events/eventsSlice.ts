@@ -3,13 +3,14 @@ import {
   createEntityAdapter,
   PayloadAction,
 } from "@reduxjs/toolkit";
+
 import { AppEvent, ParticipantStatus } from "../../types/Event";
 import { eventMapper } from "./event.mapper";
-import { createEvent } from "./eventsThunks";
 import DATA from "../../data";
-import { logout } from "../auth/authSlice";
 
-export const eventsAdapter = createEntityAdapter<AppEvent>();
+export const eventsAdapter = createEntityAdapter<AppEvent>({
+  sortComparer: (a, b) => a.dateStart - b.dateStart,
+});
 
 const initialState = eventsAdapter.getInitialState();
 
@@ -21,13 +22,30 @@ const hydratedState = eventsAdapter.setAll(
 const eventsSlice = createSlice({
   name: "events",
   initialState: hydratedState,
+
   reducers: {
     addEvent: eventsAdapter.addOne,
+
+    addEvents: eventsAdapter.addMany,
+
+    updateEvent: eventsAdapter.updateOne,
+
     removeEvent: eventsAdapter.removeOne,
 
-    updateParticipantStatus: (state, action) => {
+    clearEvents: eventsAdapter.removeAll,
+
+    updateParticipantStatus: (
+      state,
+      action: PayloadAction<{
+        eventId: string;
+        userId: string;
+        status: ParticipantStatus;
+      }>,
+    ) => {
       const { eventId, userId, status } = action.payload;
+
       const event = state.entities[eventId];
+
       if (event) {
         event.participants[userId] = status;
       }
@@ -35,6 +53,13 @@ const eventsSlice = createSlice({
   },
 });
 
-export const { addEvent, removeEvent, updateParticipantStatus } =
-  eventsSlice.actions;
+export const {
+  addEvent,
+  addEvents,
+  updateEvent,
+  removeEvent,
+  clearEvents,
+  updateParticipantStatus,
+} = eventsSlice.actions;
+
 export default eventsSlice.reducer;

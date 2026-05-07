@@ -72,3 +72,5 @@ export type EventForm = {
 
   participants: string[]; // userIds sélectionnés
 };
+
+export type CreateEventDto = Omit<ApiEvent, "id" | "createdAt">;
