@@ -28,7 +28,7 @@ const eventsSlice = createSlice({
 
     addEvents: eventsAdapter.addMany,
 
-    updateEvent: eventsAdapter.updateOne,
+    updateEventAction: eventsAdapter.updateOne,
 
     removeEvent: eventsAdapter.removeOne,
 
@@ -56,7 +56,7 @@ const eventsSlice = createSlice({
 export const {
   addEvent,
   addEvents,
-  updateEvent,
+  updateEventAction,
   removeEvent,
   clearEvents,
   updateParticipantStatus,
