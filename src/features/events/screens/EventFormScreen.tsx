@@ -1,64 +1,22 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  Switch,
-  Modal,
-  FlatList,
-  StyleSheet,
-} from "react-native";
+import { Switch, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { createEvent } from "../eventsThunks";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-//import { eventSchema } from "./eventForm.schema";
+import { eventSchema } from "../schemas/event.schema";
 import { selectContactsByFilter } from "../../contacts/contactsSelectors";
 import { RootState } from "../../../core/store";
-import * as yup from "yup";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import FormTitleField from "../components/FormTitleField";
+import FormDescriptionField from "../components/FormDescriptionField";
+import FormDateTimeField from "../components/FormDateTimeField";
+import FormParticipantsButton from "../components/FormParticipantsButton";
+import FormSubmitButton from "../components/FormSubmitButton";
 
-export const eventSchema = yup.object({
-  title: yup.string().required().min(3),
-
-  description: yup.string().notRequired(),
-
-  allDay: yup.boolean().required(),
-
-  dateStart: yup
-    .number()
-    .required("Date de début obligatoire")
-    .test(
-      "not-in-past",
-      "La date de début ne peut pas être dans le passé",
-      (value) => {
-        if (!value) return false;
-
-        return value >= Date.now();
-      },
-    ),
-
-  dateEnd: yup
-    .number()
-    .required("Date de fin obligatoire")
-    .test(
-      "is-after-start",
-      "La fin doit être après le début",
-      function (value) {
-        return value >= this.parent.dateStart;
-      },
-    ),
-
-  participants: yup.array().of(yup.string()).required(),
-
-  location: yup.object({
-    lat: yup.number().required(),
-    lng: yup.number().required(),
-    address: yup.string().notRequired(),
-  }),
-});
+import { styles } from "../styles/eventForm.styles";
+import FormParticipantsModal from "../components/FormParticipantsModal";
 
 export type FormValues = {
   title: string;
@@ -127,6 +85,7 @@ const EventFormScreen = () => {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(eventSchema) as any,
@@ -147,19 +106,6 @@ const EventFormScreen = () => {
   const allDay = watch("allDay");
   const participants = watch("participants");
 
-  const toggleParticipant = (id: string) => {
-    const current = participants ?? [];
-
-    const updated = current.includes(id)
-      ? current.filter((p) => p !== id)
-      : [...current, id];
-
-    setValue("participants", updated, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
-
   const onSubmit = (data: FormValues) => {
     const start = new Date(data.dateStart);
     const end = new Date(data.dateEnd);
@@ -176,44 +122,16 @@ const EventFormScreen = () => {
         dateEnd: end.getTime(),
       }) as any,
     );
+    reset();
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Créer un événement</Text>
 
-      {/* TITLE */}
-      <Controller
-        control={control}
-        name="title"
-        render={({ field: { value, onChange } }) => (
-          <>
-            <TextInput
-              placeholder="Titre"
-              value={value}
-              onChangeText={onChange}
-              style={styles.input}
-            />
-            {errors.title && (
-              <Text style={styles.error}>{errors.title.message}</Text>
-            )}
-          </>
-        )}
-      />
+      <FormTitleField control={control} errors={errors} />
 
-      {/* DESCRIPTION */}
-      <Controller
-        control={control}
-        name="description"
-        render={({ field: { value, onChange } }) => (
-          <TextInput
-            placeholder="Description"
-            value={value ?? ""}
-            onChangeText={onChange}
-            style={styles.input}
-          />
-        )}
-      />
+      <FormDescriptionField control={control} />
 
       {/* ALL DAY */}
       <View style={styles.row}>
@@ -227,115 +145,36 @@ const EventFormScreen = () => {
         />
       </View>
 
-      {/* DATES */}
-      {!allDay && (
-        <View>
-          <Text>Début</Text>
-          <View style={styles.TextRow}>
-            <Text style={styles.halfText}>Date</Text>
-            <Text style={styles.halfText}>Heure</Text>
-          </View>
-          <View style={styles.dateRow}>
-            <Pressable
-              style={styles.halfBtn}
-              onPress={() => openPicker("dateStart", "date")}
-            >
-              <Text>{new Date(watch("dateStart")).toLocaleDateString()}</Text>
-            </Pressable>
+      <FormDateTimeField
+        label="Début"
+        value={watch("dateStart")}
+        onPressDate={() => openPicker("dateStart", "date")}
+        onPressTime={() => openPicker("dateStart", "time")}
+        error={errors.dateStart?.message}
+      />
 
-            <Pressable
-              style={styles.halfBtn}
-              onPress={() => openPicker("dateStart", "time")}
-            >
-              <Text>
-                {new Date(watch("dateStart")).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-            </Pressable>
-          </View>
-          {errors.dateStart && (
-            <Text style={styles.error}>{errors.dateStart.message}</Text>
-          )}
-          <Text>Fin</Text>
-          <View style={styles.TextRow}>
-            <Text style={styles.halfText}>Date</Text>
-            <Text style={styles.halfText}>Heure</Text>
-          </View>
+      <FormDateTimeField
+        label="Fin"
+        value={watch("dateEnd")}
+        onPressDate={() => openPicker("dateEnd", "date")}
+        onPressTime={() => openPicker("dateEnd", "time")}
+        error={errors.dateEnd?.message}
+      />
 
-          <View style={styles.dateRow}>
-            <Pressable
-              style={styles.halfBtn}
-              onPress={() => openPicker("dateEnd", "date")}
-            >
-              <Text>{new Date(watch("dateEnd")).toLocaleDateString()}</Text>
-            </Pressable>
+      <FormParticipantsButton
+        count={participants?.length ?? 0}
+        onPress={() => setModalVisible(true)}
+      />
 
-            <Pressable
-              style={styles.halfBtn}
-              onPress={() => openPicker("dateEnd", "time")}
-            >
-              <Text>
-                {new Date(watch("dateEnd")).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-            </Pressable>
-          </View>
-          {errors.dateEnd && (
-            <Text style={styles.error}>{errors.dateEnd.message}</Text>
-          )}
-        </View>
-      )}
+      <FormSubmitButton onPress={handleSubmit(onSubmit)} />
 
-      {/* PARTICIPANTS */}
-      <Pressable style={styles.btn} onPress={() => setModalVisible(true)}>
-        <Text>Choisir participants ({participants?.length ?? 0})</Text>
-      </Pressable>
-
-      {/* SUBMIT */}
-      <Pressable style={styles.submit} onPress={handleSubmit(onSubmit)}>
-        <Text style={{ color: "white" }}>Créer événement</Text>
-      </Pressable>
-
-      {/* MODAL */}
-      <Modal visible={modalVisible} animationType="slide">
-        <SafeAreaView style={styles.modal}>
-          <Text style={styles.title}>Participants</Text>
-
-          <FlatList
-            data={contacts}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
-              const selected = participants?.includes(item.id);
-
-              return (
-                <Pressable
-                  style={[
-                    styles.contact,
-                    selected && { backgroundColor: "#cce5ff" },
-                  ]}
-                  onPress={() => toggleParticipant(item.id)}
-                >
-                  <Text>
-                    {item.firstName} {item.lastName}
-                  </Text>
-                  <Text>{selected ? "✔" : ""}</Text>
-                </Pressable>
-              );
-            }}
-          />
-
-          <Pressable
-            style={styles.submit}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text style={{ color: "white" }}>Valider</Text>
-          </Pressable>
-        </SafeAreaView>
-      </Modal>
+      <FormParticipantsModal
+        visible={modalVisible}
+        setVisible={setModalVisible}
+        watch={watch}
+        setValue={setValue}
+        contacts={contacts}
+      />
 
       {pickerVisible && (
         <DateTimePicker
@@ -368,61 +207,5 @@ const EventFormScreen = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 12 },
-  title: { fontSize: 20, fontWeight: "bold" },
-  input: { borderWidth: 1, borderColor: "#ccc", padding: 10, borderRadius: 8 },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  btn: { padding: 12, backgroundColor: "#eee", borderRadius: 8 },
-  submit: {
-    padding: 14,
-    backgroundColor: "royalblue",
-    alignItems: "center",
-    borderRadius: 8,
-  },
-  modal: { flex: 1, padding: 16 },
-  contact: {
-    padding: 12,
-    marginBottom: 8,
-    borderRadius: 8,
-    backgroundColor: "#f5f5f5",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  error: { color: "red", marginTop: 4 },
-  dateRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 12,
-  },
-  TextRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 12,
-  },
-
-  halfBtn: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: "#eee",
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  halfText: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: "royalblue",
-    borderRadius: 8,
-    alignItems: "center",
-    textAlign: "center",
-    color: "white",
-    fontWeight: "bold",
-  },
-});
 
 export default EventFormScreen;
