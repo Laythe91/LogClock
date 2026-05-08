@@ -1,16 +1,17 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
-import { styles } from "../styles/eventForm.styles";
+import { styles } from "../../styles/eventForm.styles";
 
 type Props = {
   label: string;
-
   value: number;
 
   onPressDate: () => void;
-  onPressTime: () => void;
+  onPressTime?: () => void;
 
   error?: string;
+
+  hideTime?: boolean;
 };
 
 const FormDateTimeField = ({
@@ -19,6 +20,7 @@ const FormDateTimeField = ({
   onPressDate,
   onPressTime,
   error,
+  hideTime,
 }: Props) => {
   const current = new Date(value);
 
@@ -28,7 +30,7 @@ const FormDateTimeField = ({
 
       <View style={styles.TextRow}>
         <Text style={styles.halfText}>Date</Text>
-        <Text style={styles.halfText}>Heure</Text>
+        {!hideTime && <Text style={styles.halfText}>Heure</Text>}
       </View>
 
       <View style={styles.dateRow}>
@@ -36,14 +38,16 @@ const FormDateTimeField = ({
           <Text>{current.toLocaleDateString()}</Text>
         </Pressable>
 
-        <Pressable style={styles.halfBtn} onPress={onPressTime}>
-          <Text>
-            {current.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </Text>
-        </Pressable>
+        {!hideTime && (
+          <Pressable style={styles.halfBtn} onPress={onPressTime}>
+            <Text>
+              {current.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Text>
+          </Pressable>
+        )}
       </View>
 
       {error && <Text style={styles.error}>{error}</Text>}

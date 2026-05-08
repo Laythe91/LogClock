@@ -31,6 +31,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { setLocale } from "../../locales/localesSlice"; // ton slice Redux pour les langues
 import { LocaleKey } from "../../locales/localesSlice";
+import EventCard from "../components/EventCard";
 
 const screenWidth = Dimensions.get("window").width;
 const dayWidth = (screenWidth - 32) / 8; // 32 = padding total du container
@@ -86,30 +87,54 @@ const CalendarScreen = () => {
   }, [current]);
 
   // Filtrer les événements pour la date sélectionnée
-  const eventsForSelectedDate = events.filter(
-    (ev) => dayjs(ev.dateStart).format("YYYY-MM-DD") === selectedDate,
-  );
+  const eventsForSelectedDate = events.filter((ev) => {
+    const selected = dayjs(selectedDate);
+
+    const start = dayjs(ev.dateStart).startOf("day");
+    const end = dayjs(ev.dateEnd).endOf("day");
+
+    return (
+      (selected.isAfter(start) && selected.isBefore(end)) ||
+      selected.isSame(start, "day") ||
+      selected.isSame(end, "day")
+    );
+  });
 
   const eventsByDate: Record<string, AppEvent[]> = {};
 
   events.forEach((ev) => {
-    const key = dayjs(ev.dateStart).format("YYYY-MM-DD");
-    if (!eventsByDate[key]) eventsByDate[key] = [];
-    eventsByDate[key].push(ev);
-  });
+    let current = dayjs(ev.dateStart).startOf("day");
+    const end = dayjs(ev.dateEnd).startOf("day");
 
+    while (current.isBefore(end) || current.isSame(end, "day")) {
+      const key = current.format("YYYY-MM-DD");
+
+      if (!eventsByDate[key]) {
+        eventsByDate[key] = [];
+      }
+
+      eventsByDate[key].push(ev);
+
+      current = current.add(1, "day");
+    }
+  });
   // Préparer les dates marquées
   const markedDates: MarkedDates = {};
+
   events.forEach((ev) => {
-    const dateKey = dayjs(ev.dateStart).format("YYYY-MM-DD");
-    if (markedDates[dateKey]) {
-      markedDates[dateKey] = {
-        ...markedDates[dateKey],
+    let current = dayjs(ev.dateStart).startOf("day");
+    const end = dayjs(ev.dateEnd).startOf("day");
+
+    while (current.isBefore(end) || current.isSame(end, "day")) {
+      const key = current.format("YYYY-MM-DD");
+
+      markedDates[key] = {
+        ...(markedDates[key] || {}),
         marked: true,
         dotColor: "#1E90FF",
       };
-    } else {
-      markedDates[dateKey] = { marked: true, dotColor: "#1E90FF" };
+
+      current = current.add(1, "day");
     }
   });
 
@@ -137,10 +162,13 @@ const CalendarScreen = () => {
     return (
       <View style={styles.eventCard}>
         <Text style={styles.eventTitle}>{item.title}</Text>
-        <Text style={styles.eventTime}>
-          {dayjs(item.dateStart).format("HH:mm")} -{" "}
-          {dayjs(item.dateEnd).format("HH:mm")}
-        </Text>
+
+        <EventCard
+          start={item.dateStart}
+          end={item.dateEnd}
+          allDay={item.allDay}
+        />
+
         {item.description && <Text>{item.description}</Text>}
       </View>
     );

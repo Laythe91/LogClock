@@ -159,7 +159,7 @@ const DATA = {
       title: "Repas solo",
       description: "Déjeuner entre amis pour discuter du projet",
       dateStart: "2026-05-08T20:00:00.000Z",
-      dateEnd: "2026-05-08T22:00:00.000Z",
+      dateEnd: "2026-05-15T22:00:00.000Z",
       allDay: false,
       location: {
         lat: 48.8566,

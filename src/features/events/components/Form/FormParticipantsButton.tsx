@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
-import { styles } from "../styles/eventForm.styles";
+import { styles } from "../../styles/eventForm.styles";
 
 type Props = {
   count: number;

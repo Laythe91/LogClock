@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller } from "react-hook-form";
 import { TextInput } from "react-native";
-import { styles } from "../styles/eventForm.styles";
+import { styles } from "../../styles/eventForm.styles";
 
 const FormDescriptionField = ({ control }: any) => {
   return (

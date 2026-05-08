@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller } from "react-hook-form";
 import { TextInput, Text } from "react-native";
-import { styles } from "../styles/eventForm.styles";
+import { styles } from "../../styles/eventForm.styles";
 
 export const FormTitleField = ({ control, errors }: any) => {
   return (

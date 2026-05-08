@@ -74,3 +74,23 @@ export type EventForm = {
 };
 
 export type CreateEventDto = Omit<ApiEvent, "id" | "createdAt">;
+
+export type EventDetails = Omit<AppEvent, "participants"> & {
+  creator: {
+    id: string;
+    name: string;
+  } | null;
+
+  participants: {
+    id: string;
+    name: string;
+    status: ParticipantStatus;
+  }[];
+};
+
+export type EventRole = {
+  isOwner: boolean;
+  isInvited: boolean;
+  isParticipant: boolean;
+  myStatus?: ParticipantStatus;
+};

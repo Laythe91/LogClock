@@ -7,8 +7,7 @@ import { selectMyEventsWithFilter } from "../eventsSelectors";
 import { RootStackParamList } from "../../../types/Event";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
-import { EventFilter } from "../../../types/Event";
+import EventCard from "../../calendar/components/EventCard";
 // Assure-toi d'importer ton type
 
 type EventsRouteProp = RouteProp<RootStackParamList, "Events">;
@@ -47,9 +46,11 @@ const EventsScreen = () => {
           >
             <Text style={styles.titleEvent}>{item.title}</Text>
             <Text>{item.description}</Text>
-            <Text>
-              {item.dateStart} - {item.dateEnd}
-            </Text>
+            <EventCard
+              start={item.dateStart}
+              end={item.dateEnd}
+              allDay={item.allDay}
+            />
           </Pressable>
         )}
       />

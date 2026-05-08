@@ -17,41 +17,26 @@ type EventDetailsRoute = RouteProp<RootStackParamList, "EventDetails">;
 type ConfirmAction = "accept" | "decline" | "delete";
 
 const EventDetailsScreen = () => {
+  const currentUserId = useSelector((state: RootState) => state.auth.userId);
+  if (!currentUserId) return null;
+
   const route = useRoute<EventDetailsRoute>();
   const { eventId } = route.params;
-  const currentUserId = useSelector((state: RootState) => state.auth.userId);
-  const event = useSelector((state: RootState) =>
-    selectEventFullDetails(state, eventId),
-  );
-
-  if (!event) return null;
-  if (!currentUserId) return null;
 
   const [activeStatus, setActiveStatus] = useState<
     ParticipantStatus | undefined
   >(undefined);
 
-  const participants = useSelector((state: RootState) =>
-    selectParticipantsByStatus(state, eventId, activeStatus),
-  );
   const [modalVisible, setModalVisible] = useState(false);
 
   const [pendingAction, setPendingAction] = useState<ConfirmAction | null>(
     null,
   );
 
-  const role = getEventRole(event, currentUserId);
-
-  const isInvitedView = role.isInvited;
-  const isOwnerView = role.isOwner;
-
-  // 🔥 séparation current user / autres
-  const currentUserParticipant = role.myStatus;
-
   const handleStatusPress = (status: "accepted" | "declined") => {
     if (!currentUserParticipant) return;
 
-    if (currentUserParticipant === status) return;
+    if (currentUserParticipant.status === status) return;
 
     const actionMap = {
       accepted: "accept",
@@ -84,6 +69,26 @@ const EventDetailsScreen = () => {
     { label: "Maybe", value: "pending" },
     { label: "Declined", value: "declined" },
   ];
+
+  const event = useSelector((state: RootState) =>
+    selectEventFullDetails(state, eventId),
+  );
+
+  const participants = useSelector((state: RootState) =>
+    selectParticipantsByStatus(state, eventId, activeStatus),
+  );
+
+  if (!event) return null;
+
+  const role = getEventRole(event, currentUserId);
+
+  const isInvitedView = role.isInvited;
+  const isOwnerView = role.isOwner;
+
+  // 🔥 séparation current user / autres
+  const currentUserParticipant = participants.find(
+    (p) => p.id === currentUserId,
+  );
 
   const otherParticipants = participants.filter((p) => p.id !== currentUserId);
 
@@ -165,7 +170,7 @@ const EventDetailsScreen = () => {
               onPress={() => handleStatusPress("accepted")}
               style={({ pressed }) => [
                 styles.option,
-                currentUserParticipant === "accepted"
+                currentUserParticipant.status === "accepted"
                   ? styles.optionAccepted
                   : styles.optionInactive,
                 pressed && styles.optionPressed,
@@ -178,7 +183,7 @@ const EventDetailsScreen = () => {
               onPress={() => handleStatusPress("declined")}
               style={({ pressed }) => [
                 styles.option,
-                currentUserParticipant === "declined"
+                currentUserParticipant.status === "declined"
                   ? styles.optionDeclined
                   : styles.optionInactive,
                 pressed && styles.optionPressed,
@@ -189,7 +194,7 @@ const EventDetailsScreen = () => {
           </View>
 
           {/* pending */}
-          {currentUserParticipant === "pending" && (
+          {currentUserParticipant.status === "pending" && (
             <Text style={styles.pendingText}>En attente de réponse</Text>
           )}
         </View>

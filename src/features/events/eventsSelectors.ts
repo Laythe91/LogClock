@@ -5,6 +5,7 @@ import {
   EventFilter,
   ParticipantStatus,
   MainEventFilter,
+  EventDetails,
 } from "../../types/Event";
 
 const selectors = eventsAdapter.getSelectors<RootState>(
@@ -16,6 +17,43 @@ const selectAllEvents = selectors.selectAll;
 export const selectEventById = (state: RootState, eventId: string) =>
   state.events.entities[eventId];
 
+export const selectEventFullDetails = createSelector(
+  [
+    (state: RootState, eventId: string) => state.events.entities[eventId],
+
+    (state: RootState) => state.contacts.profilesById,
+  ],
+  (event, profilesById): EventDetails | null => {
+    if (!event) return null;
+
+    const participants = Object.entries(event.participants).map(
+      ([userId, status]) => {
+        const user = profilesById[userId];
+
+        return {
+          id: userId,
+          name: user ? `${user.firstName} ${user.lastName}` : "Unknown",
+          status,
+        };
+      },
+    );
+
+    const creator = profilesById[event.creatorId];
+
+    return {
+      ...event,
+      creator: creator
+        ? {
+            id: creator.id,
+            name: `${creator.firstName} ${creator.lastName}`,
+          }
+        : null,
+      participants,
+    };
+  },
+);
+
+/*
 export const selectEventFullDetails = createSelector(
   [
     (state: RootState, eventId: string) => state.events.entities[eventId],
@@ -51,6 +89,7 @@ export const selectEventFullDetails = createSelector(
     };
   },
 );
+*/
 
 export const selectInvitedEventsCount = createSelector(
   [selectors.selectAll, (state: RootState) => state.auth.userId],

@@ -3,7 +3,7 @@ import { Modal, FlatList, Pressable, Text } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { styles } from "../styles/eventForm.styles";
+import { styles } from "../../styles/eventForm.styles";
 
 type Props = {
   visible: boolean;

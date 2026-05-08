@@ -9,14 +9,14 @@ import { selectContactsByFilter } from "../../contacts/contactsSelectors";
 import { RootState } from "../../../core/store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import FormTitleField from "../components/FormTitleField";
-import FormDescriptionField from "../components/FormDescriptionField";
-import FormDateTimeField from "../components/FormDateTimeField";
-import FormParticipantsButton from "../components/FormParticipantsButton";
-import FormSubmitButton from "../components/FormSubmitButton";
+import FormTitleField from "../components/Form/FormTitleField";
+import FormDescriptionField from "../components/Form/FormDescriptionField";
+import FormDateTimeField from "../components/Form/FormDateTimeField";
+import FormParticipantsButton from "../components/Form/FormParticipantsButton";
+import FormSubmitButton from "../components/Form/FormSubmitButton";
 
 import { styles } from "../styles/eventForm.styles";
-import FormParticipantsModal from "../components/FormParticipantsModal";
+import FormParticipantsModal from "../components/Form/FormParticipantsModal";
 
 export type FormValues = {
   title: string;
@@ -145,21 +145,34 @@ const EventFormScreen = () => {
         />
       </View>
 
-      <FormDateTimeField
-        label="Début"
-        value={watch("dateStart")}
-        onPressDate={() => openPicker("dateStart", "date")}
-        onPressTime={() => openPicker("dateStart", "time")}
-        error={errors.dateStart?.message}
-      />
+      {/* DATE */}
+      {allDay ? (
+        <FormDateTimeField
+          label="Date"
+          value={watch("dateStart")}
+          onPressDate={() => openPicker("dateStart", "date")}
+          hideTime
+          error={errors.dateStart?.message}
+        />
+      ) : (
+        <>
+          <FormDateTimeField
+            label="Début"
+            value={watch("dateStart")}
+            onPressDate={() => openPicker("dateStart", "date")}
+            onPressTime={() => openPicker("dateStart", "time")}
+            error={errors.dateStart?.message}
+          />
 
-      <FormDateTimeField
-        label="Fin"
-        value={watch("dateEnd")}
-        onPressDate={() => openPicker("dateEnd", "date")}
-        onPressTime={() => openPicker("dateEnd", "time")}
-        error={errors.dateEnd?.message}
-      />
+          <FormDateTimeField
+            label="Fin"
+            value={watch("dateEnd")}
+            onPressDate={() => openPicker("dateEnd", "date")}
+            onPressTime={() => openPicker("dateEnd", "time")}
+            error={errors.dateEnd?.message}
+          />
+        </>
+      )}
 
       <FormParticipantsButton
         count={participants?.length ?? 0}
