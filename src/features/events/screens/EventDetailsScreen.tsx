@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../core/store";
 import { ParticipantStatus, RootStackParamList } from "../../../types/Event";
@@ -11,8 +11,11 @@ import {
 } from "../eventsSelectors";
 import ConfirmModal from "../components/ConfirmModal";
 import { getEventRole } from "../hooks/useEventRole";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import EventCard from "../../calendar/components/EventCard";
 
 type EventDetailsRoute = RouteProp<RootStackParamList, "EventDetails">;
+type Nav = NativeStackNavigationProp<RootStackParamList, "EventCreate">;
 
 type ConfirmAction = "accept" | "decline" | "delete";
 
@@ -23,6 +26,8 @@ const EventDetailsScreen = () => {
   const event = useSelector((state: RootState) =>
     selectEventFullDetails(state, eventId),
   );
+  const navigation = useNavigation<Nav>();
+  console.log(`EVENT ID : ${eventId}`);
 
   if (!event) return null;
   if (!currentUserId) return null;
@@ -84,7 +89,11 @@ const EventDetailsScreen = () => {
     { label: "Maybe", value: "pending" },
     { label: "Declined", value: "declined" },
   ];
-
+  /*        <EventCard
+          start={item.dateStart}
+          end={item.dateEnd}
+          allDay={item.allDay}
+        />*/
   const otherParticipants = participants.filter((p) => p.id !== currentUserId);
 
   return (
@@ -92,8 +101,11 @@ const EventDetailsScreen = () => {
       <Text style={styles.title}>{event.title}</Text>
 
       <Text>Créé par : {event.creator?.name}</Text>
-      <Text>Date début : {event.dateStart}</Text>
-      <Text>Date fin : {event.dateEnd}</Text>
+      <EventCard
+        start={event.dateStart}
+        end={event.dateEnd}
+        allDay={event.allDay}
+      />
 
       {/* TABS */}
       <View style={styles.tabs}>
@@ -133,7 +145,11 @@ const EventDetailsScreen = () => {
                 styles.editBtn,
                 pressed && styles.ownerPressed,
               ]}
-              onPress={() => console.log("EDIT EVENT")}
+              onPress={() =>
+                navigation.navigate("EventCreate", {
+                  eventId,
+                })
+              }
             >
               <Text style={styles.ownerText}>Modifier</Text>
             </Pressable>

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { createEvent } from "../eventsThunks";
+import { createEvent, updateEvent } from "../eventsThunks";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { eventSchema } from "../schemas/event.schema";
@@ -14,9 +14,12 @@ import FormDescriptionField from "../components/Form/FormDescriptionField";
 import FormDateTimeField from "../components/Form/FormDateTimeField";
 import FormParticipantsButton from "../components/Form/FormParticipantsButton";
 import FormSubmitButton from "../components/Form/FormSubmitButton";
+import { useRoute } from "@react-navigation/native";
 
 import { styles } from "../styles/eventForm.styles";
 import FormParticipantsModal from "../components/Form/FormParticipantsModal";
+import { selectEventFullDetails } from "../eventsSelectors";
+import { AppEvent, ParticipantStatus } from "../../../types/Event";
 
 export type FormValues = {
   title: string;
@@ -33,6 +36,14 @@ export type FormValues = {
 };
 
 const EventFormScreen = () => {
+  const route = useRoute<any>();
+
+  const selectedDate = route.params?.selectedDate;
+  const eventId = route.params?.eventId;
+
+  const event = useSelector((state: RootState) =>
+    eventId ? selectEventFullDetails(state, eventId) : null,
+  );
   const dispatch = useDispatch();
   const contacts = useSelector((state: RootState) =>
     selectContactsByFilter(state, "accepted"),
@@ -78,7 +89,16 @@ const EventFormScreen = () => {
     });
   };
 
-  const now = Date.now();
+  //const now = Date.now();
+
+  const baseDate = selectedDate ? new Date(selectedDate) : new Date();
+
+  baseDate.setMinutes(baseDate.getMinutes() + 5);
+
+  const startDate = new Date(baseDate);
+
+  const endDate = new Date(baseDate);
+  endDate.setHours(endDate.getHours() + 1);
 
   const {
     control,
@@ -93,8 +113,8 @@ const EventFormScreen = () => {
       title: "",
       description: "",
       allDay: false,
-      dateStart: now + 5 * 60 * 1000,
-      dateEnd: now + 60 * 60 * 1000,
+      dateStart: startDate.getTime(),
+      dateEnd: endDate.getTime(),
       participants: [],
       location: {
         lat: 48.8566,
@@ -115,15 +135,46 @@ const EventFormScreen = () => {
       end.setHours(23, 59, 59, 999);
     }
 
-    dispatch(
-      createEvent({
-        ...data,
-        dateStart: start.getTime(),
-        dateEnd: end.getTime(),
-      }) as any,
+    const participantsMap = data.participants.reduce(
+      (acc, userId) => {
+        acc[userId] = "pending";
+        return acc;
+      },
+      {} as Record<string, ParticipantStatus>,
     );
+
+    const payload: Partial<AppEvent> = {
+      ...data,
+      participants: participantsMap,
+      dateStart: start.getTime(),
+      dateEnd: end.getTime(),
+    };
+
+    if (eventId) {
+      dispatch(updateEvent(eventId, payload) as any);
+    } else {
+      dispatch(createEvent(payload as any) as any);
+    }
+
     reset();
   };
+
+  useEffect(() => {
+    if (event) {
+      reset({
+        title: event.title,
+        description: event.description ?? "",
+        allDay: event.allDay ?? false,
+        dateStart: event.dateStart,
+        dateEnd: event.dateEnd,
+        participants: event.participants?.map((p) => p.id) ?? [],
+        location: event.location ?? {
+          lat: 48.8566,
+          lng: 2.3522,
+        },
+      });
+    }
+  }, [event]);
 
   return (
     <SafeAreaView style={styles.container}>

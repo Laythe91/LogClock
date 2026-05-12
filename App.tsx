@@ -118,6 +118,37 @@ const MainTabs = createBottomTabNavigator({
       transform: [{ scale: 1.5 }],
     },*/
 
+const CalendarStack = createNativeStackNavigator({
+  screenOptions: {
+    headerShown: false,
+  },
+  screens: {
+    Selected: {
+      screen: CalendarScreen,
+      options: {
+        title: "Accueil",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+    EventDetails: {
+      screen: EventDetailsScreen,
+      options: {
+        title: "Détails event",
+        animation: "slide_from_right",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+    EventCreate: {
+      screen: EventFormScreen,
+      options: {
+        title: "New event",
+        //presentation: "transparentModal",
+        animation: "slide_from_bottom",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+  },
+});
 const EventsStack = createNativeStackNavigator({
   screenOptions: {
     headerShown: false,
@@ -134,6 +165,7 @@ const EventsStack = createNativeStackNavigator({
       screen: EventDetailsScreen,
       options: {
         title: "Détails event",
+        animation: "slide_from_right",
         headerShown: false, // 🔥 IMPORTANT
       },
     },
@@ -200,7 +232,7 @@ const MyDrawer = createDrawerNavigator({
       },
     },
     Calendar: {
-      screen: CalendarScreen,
+      screen: CalendarStack,
       options: {
         title: "Calendar",
         drawerIcon: ({ color, size }) => (

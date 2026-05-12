@@ -56,7 +56,7 @@ const EventsScreen = () => {
       />
       {filter === "created" && (
         <Pressable
-          onPress={() => navigation.navigate("EventCreate")}
+          onPress={() => navigation.navigate("EventCreate", {})}
           style={({ pressed }) => [styles.fab, pressed && styles.buttonPressed]}
         >
           <MaterialIcons name="add" size={28} color="white" />
@@ -65,7 +65,6 @@ const EventsScreen = () => {
     </View>
   );
 };
-export default EventsScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
@@ -98,3 +97,5 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
 });
+
+export default EventsScreen;

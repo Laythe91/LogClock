@@ -34,8 +34,12 @@ export type EventFilter = {
 export type RootStackParamList = {
   Events: { filter: MainEventFilter };
   EventDetails: { eventId: string; filter?: MainEventFilter };
+  //EventForm: { eventId?: string };
   Contacts: { filter: ParticipantStatus };
-  EventCreate: undefined;
+  EventCreate: {
+    selectedDate?: string;
+    eventId?: string;
+  };
 };
 
 export type ApiEvent = {

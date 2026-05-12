@@ -24,7 +24,7 @@ import "dayjs/locale/zh"; // chinois
 import "dayjs/locale/ko"; // coréen
 import "dayjs/locale/ru"; // russe
 import "dayjs/locale/hi";
-import { AppEvent } from "../../../types/Event";
+import { AppEvent, RootStackParamList } from "../../../types/Event";
 import { eventsAdapter } from "../../events/eventsSlice";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -32,9 +32,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { setLocale } from "../../locales/localesSlice"; // ton slice Redux pour les langues
 import { LocaleKey } from "../../locales/localesSlice";
 import EventCard from "../components/EventCard";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const screenWidth = Dimensions.get("window").width;
 const dayWidth = (screenWidth - 32) / 8; // 32 = padding total du container
+
+type NavProp = NativeStackNavigationProp<RootStackParamList, "Events">;
 
 type MarkedDates = {
   [date: string]: {
@@ -47,17 +51,13 @@ type MarkedDates = {
 
 const CalendarScreen = () => {
   const dispatch = useAppDispatch();
+  const navigation = useNavigation<NavProp>();
+
   const selectAllEvents = eventsAdapter.getSelectors(
     (state: RootState) => state.events,
   ).selectAll;
 
   const events = useSelector(selectAllEvents);
-  // appliquer la locale AVANT le render
-  /*if (locales[current]) {
-    LocaleConfig.locales["custom"] = locales[current];
-    LocaleConfig.defaultLocale = "custom";
-    dayjs.locale(current);
-  }*/
 
   // Ou on peut déstructurer pour récupérer plusieurs choses
   const { current, translations, timezone } = useAppSelector(
@@ -69,15 +69,6 @@ const CalendarScreen = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
     dayjs().format("YYYY-MM-DD"),
   );
-
-  // Mettre à jour la locale du calendrier et dayjs
-  /* useEffect(() => {
-    if (locales[current]) {
-      LocaleConfig.locales["custom"] = locales[current];
-      LocaleConfig.defaultLocale = "custom";
-      dayjs.locale(current); // pour formater correctement les jours et mois
-    }
-  }, [current, locales]);*/
 
   // Mettre à jour DayJS quand la langue change
   useEffect(() => {
@@ -158,7 +149,7 @@ const CalendarScreen = () => {
     monthTextColor: "#1E90FF", // Couleur du nom du mois
   };
 
-  const renderItem: ListRenderItem<AppEvent> = ({ item }) => {
+  const renderItem2: ListRenderItem<AppEvent> = ({ item }) => {
     return (
       <View style={styles.eventCard}>
         <Text style={styles.eventTitle}>{item.title}</Text>
@@ -171,6 +162,27 @@ const CalendarScreen = () => {
 
         {item.description && <Text>{item.description}</Text>}
       </View>
+    );
+  };
+
+  const renderItem: ListRenderItem<AppEvent> = ({ item }) => {
+    return (
+      <Pressable
+        style={styles.eventCard}
+        onPress={() =>
+          navigation.navigate("EventDetails", {
+            eventId: item.id,
+          })
+        }
+      >
+        <Text style={styles.eventTitle}>{item.title}</Text>
+        <Text>{item.description}</Text>
+        <EventCard
+          start={item.dateStart}
+          end={item.dateEnd}
+          allDay={item.allDay}
+        />
+      </Pressable>
     );
   };
 
@@ -253,7 +265,7 @@ const CalendarScreen = () => {
       />
 
       <Pressable
-        onPress={() => console.log("Add event")}
+        onPress={() => navigation.navigate("EventCreate", { selectedDate })}
         style={({ pressed }) => [styles.fab, pressed && styles.buttonPressed]}
       >
         <MaterialIcons name="add" size={28} color="white" />

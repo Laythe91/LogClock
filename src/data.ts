@@ -65,7 +65,9 @@ const DATA = {
       },
       contactsStatusCache: {
         user1: "accepted",
+        user2: "accepted",
         user3: "accepted",
+        user4: "accepted",
       },
       myEvents: {
         created: ["event-2222-bbbb"],
