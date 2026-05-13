@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../core/store";
 
 type ActionType = "accept" | "decline" | "delete";
 
@@ -11,14 +13,23 @@ type Props = {
 };
 
 const ConfirmModal = ({ visible, action, onCancel, onConfirm }: Props) => {
+  const { current, translations } = useSelector(
+    (state: RootState) => state.locales,
+  );
+
+  const t = translations[current];
+
   const getText = () => {
     switch (action) {
       case "delete":
-        return "Voulez-vous vraiment annuler cet événement ?";
+        return t.events.modal.confirmDeleteEvent;
+
       case "accept":
-        return "Confirmer votre participation ?";
+        return t.events.modal.confirmAccept;
+
       case "decline":
-        return "Confirmer le refus de participation ?";
+        return t.events.modal.confirmDecline;
+
       default:
         return "";
     }
@@ -28,7 +39,7 @@ const ConfirmModal = ({ visible, action, onCancel, onConfirm }: Props) => {
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.box}>
-          <Text style={styles.title}>Confirmation</Text>
+          <Text style={styles.title}>{t.events.modal.confirmation}</Text>
 
           <Text style={styles.text}>{getText()}</Text>
 
@@ -40,7 +51,7 @@ const ConfirmModal = ({ visible, action, onCancel, onConfirm }: Props) => {
               ]}
               onPress={onCancel}
             >
-              <Text>Annuler</Text>
+              <Text>{t.common.cancel}</Text>
             </Pressable>
 
             <Pressable
@@ -50,7 +61,7 @@ const ConfirmModal = ({ visible, action, onCancel, onConfirm }: Props) => {
               ]}
               onPress={onConfirm}
             >
-              <Text style={{ color: "white" }}>Confirmer</Text>
+              <Text style={{ color: "white" }}>{t.common.confirm}</Text>
             </Pressable>
           </View>
         </View>

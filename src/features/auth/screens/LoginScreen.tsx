@@ -70,12 +70,12 @@ const LoginScreen = () => {
                 style={styles.image}
                 source={require("../../../../assets/LogclockLogo3.png")}
               />
-              <Text style={styles.welcomeText}>{t.welcome}</Text>
+              <Text style={styles.welcomeText}>{t.auth.login.welcome}</Text>
             </View>
 
             {/* FORMULAIRE */}
             <View style={styles.formContainer}>
-              <Text style={styles.title}>{t.loginTitle}</Text>
+              <Text style={styles.title}>{t.auth.login.title}</Text>
 
               <View style={styles.inputs}>
                 {/* CHAMP EMAIL */}
@@ -84,7 +84,7 @@ const LoginScreen = () => {
                   name="email"
                   render={({ field: { onChange, value } }) => (
                     <TextInput
-                      placeholder={t.emailPlaceholder}
+                      placeholder={t.common.email}
                       style={[
                         styles.textInput,
                         errors.email && styles.inputError,
@@ -116,7 +116,7 @@ const LoginScreen = () => {
                       ]}
                     >
                       <TextInput
-                        placeholder={t.passwordPlaceholder}
+                        placeholder={t.common.password}
                         style={styles.passwordInput}
                         placeholderTextColor="#999"
                         value={value}
@@ -157,7 +157,7 @@ const LoginScreen = () => {
                   ]}
                 >
                   <View style={[styles.connectButton]}>
-                    <Text style={styles.textConnect}>{t.connectButton}</Text>
+                    <Text style={styles.textConnect}>{t.common.connect}</Text>
                   </View>
                 </Pressable>
 
@@ -169,7 +169,9 @@ const LoginScreen = () => {
                     },
                   ]}
                 >
-                  <Text style={styles.forgetPassText}>{t.forgotPassword}</Text>
+                  <Text style={styles.forgetPassText}>
+                    {t.auth.login.forgot.Password}
+                  </Text>
                 </Pressable>
               </View>
             </View>
@@ -185,7 +187,9 @@ const LoginScreen = () => {
                 ]}
               >
                 <View style={styles.buttonStyle}>
-                  <Text style={styles.textSignUp}>{t.createAccount}</Text>
+                  <Text style={styles.textSignUp}>
+                    {t.common.createAccount}
+                  </Text>
                 </View>
               </Pressable>
             </View>

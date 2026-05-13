@@ -233,7 +233,9 @@ const CalendarScreen = () => {
                 >
                   {eventsForThisDay.length > 0 &&
                     `${eventsForThisDay.length} ${
-                      eventsForThisDay.length === 1 ? "Event" : "Events"
+                      eventsForThisDay.length === 1
+                        ? t.common.event
+                        : t.common.events
                     }`}
                 </Text>
               </View>
@@ -253,12 +255,12 @@ const CalendarScreen = () => {
         renderItem={renderItem}
         ListHeaderComponent={
           <Text style={{ fontSize: 17, textAlign: "center", marginBottom: 10 }}>
-            {t.eventListHeader} {/* <--- TRADUCTION ICI */}
+            {t.events.calendar.eventListHeader} {/* <--- TRADUCTION ICI */}
           </Text>
         }
         ListEmptyComponent={
           <Text style={styles.noEventText}>
-            {t.noEvent} {/* <--- TRADUCTION ICI */}
+            {t.events.calendar.noEvent} {/* <--- TRADUCTION ICI */}
           </Text>
         }
         extraData={current}

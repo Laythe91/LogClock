@@ -20,6 +20,11 @@ type Nav = NativeStackNavigationProp<RootStackParamList, "EventCreate">;
 type ConfirmAction = "accept" | "decline" | "delete";
 
 const EventDetailsScreen = () => {
+  const { current, translations } = useSelector(
+    (state: RootState) => state.locales,
+  );
+
+  const t = translations[current];
   const route = useRoute<EventDetailsRoute>();
   const { eventId } = route.params;
   const currentUserId = useSelector((state: RootState) => state.auth.userId);
@@ -84,10 +89,10 @@ const EventDetailsScreen = () => {
   };
 
   const tabs: { label: string; value?: ParticipantStatus }[] = [
-    { label: "All", value: undefined },
-    { label: "Going", value: "accepted" },
-    { label: "Maybe", value: "pending" },
-    { label: "Declined", value: "declined" },
+    { label: t.events.details.tabs.all, value: undefined },
+    { label: t.events.details.tabs.going, value: "accepted" },
+    { label: t.events.details.tabs.maybe, value: "pending" },
+    { label: t.events.details.tabs.declined, value: "declined" },
   ];
   /*        <EventCard
           start={item.dateStart}
@@ -100,7 +105,9 @@ const EventDetailsScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>{event.title}</Text>
 
-      <Text>Créé par : {event.creator?.name}</Text>
+      <Text>
+        {t.events.details.createdBy} : {event.creator?.name}
+      </Text>
       <EventCard
         start={event.dateStart}
         end={event.dateEnd}
@@ -136,7 +143,7 @@ const EventDetailsScreen = () => {
       {/* OWNER CARD */}
       {isOwnerView && (
         <View style={styles.ownerCard}>
-          <Text style={styles.ownerTitle}>Gestion de l’événement</Text>
+          <Text style={styles.ownerTitle}>{t.events.details.ownerTitle}</Text>
 
           <View style={styles.ownerActions}>
             <Pressable
@@ -148,10 +155,11 @@ const EventDetailsScreen = () => {
               onPress={() =>
                 navigation.navigate("EventCreate", {
                   eventId,
+                  currentUserId,
                 })
               }
             >
-              <Text style={styles.ownerText}>Modifier</Text>
+              <Text style={styles.ownerText}>{t.events.details.edit}</Text>
             </Pressable>
 
             <Pressable
@@ -164,7 +172,9 @@ const EventDetailsScreen = () => {
                 openConfirm("delete");
               }}
             >
-              <Text style={styles.ownerText}>Annuler</Text>
+              <Text style={styles.ownerText}>
+                {t.events.details.cancelEvent}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -173,7 +183,7 @@ const EventDetailsScreen = () => {
       {/* 👤 TON BLOC (UNIQUEMENT SI INVITED) */}
       {isInvitedView && currentUserParticipant && (
         <View style={styles.myCard}>
-          <Text style={styles.myTitle}>Ma participation</Text>
+          <Text style={styles.myTitle}>{t.events.details.myParticipation}</Text>
 
           {/* SELECTOR */}
           <View style={styles.selector}>
@@ -187,7 +197,7 @@ const EventDetailsScreen = () => {
                 pressed && styles.optionPressed,
               ]}
             >
-              <Text style={styles.optionText}>Accepté</Text>
+              <Text style={styles.optionText}>{t.common.accepted}</Text>
             </Pressable>
 
             <Pressable
@@ -200,19 +210,21 @@ const EventDetailsScreen = () => {
                 pressed && styles.optionPressed,
               ]}
             >
-              <Text style={styles.optionText}>Refusé</Text>
+              <Text style={styles.optionText}>{t.common.declined}</Text>
             </Pressable>
           </View>
 
           {/* pending */}
           {currentUserParticipant === "pending" && (
-            <Text style={styles.pendingText}>En attente de réponse</Text>
+            <Text style={styles.pendingText}>
+              {t.events.details.waitingResponse}
+            </Text>
           )}
         </View>
       )}
 
       {/* LIST */}
-      <Text style={styles.subtitle}>Participants :</Text>
+      <Text style={styles.subtitle}>{t.events.details.participants} :</Text>
 
       <FlatList
         data={isInvitedView || isOwnerView ? otherParticipants : participants}

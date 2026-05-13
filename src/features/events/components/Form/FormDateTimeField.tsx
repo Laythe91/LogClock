@@ -12,6 +12,7 @@ type Props = {
   error?: string;
 
   hideTime?: boolean;
+  t: any;
 };
 
 const FormDateTimeField = ({
@@ -21,6 +22,7 @@ const FormDateTimeField = ({
   onPressTime,
   error,
   hideTime,
+  t,
 }: Props) => {
   const current = new Date(value);
 
@@ -29,8 +31,8 @@ const FormDateTimeField = ({
       <Text>{label}</Text>
 
       <View style={styles.TextRow}>
-        <Text style={styles.halfText}>Date</Text>
-        {!hideTime && <Text style={styles.halfText}>Heure</Text>}
+        <Text style={styles.halfText}>{t.common.date}</Text>
+        {!hideTime && <Text style={styles.halfText}>{t.common.time}</Text>}
       </View>
 
       <View style={styles.dateRow}>

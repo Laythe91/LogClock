@@ -3,7 +3,7 @@ import { Controller } from "react-hook-form";
 import { TextInput, Text } from "react-native";
 import { styles } from "../../styles/eventForm.styles";
 
-export const FormTitleField = ({ control, errors }: any) => {
+export const FormTitleField = ({ control, errors, t }: any) => {
   return (
     <Controller
       control={control}
@@ -11,7 +11,7 @@ export const FormTitleField = ({ control, errors }: any) => {
       render={({ field: { value, onChange } }) => (
         <>
           <TextInput
-            placeholder="Titre"
+            placeholder={t.events.form.descriptionPlaceholder}
             value={value}
             onChangeText={onChange}
             style={styles.input}

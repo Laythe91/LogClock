@@ -38,6 +38,7 @@ export type RootStackParamList = {
   Contacts: { filter: ParticipantStatus };
   EventCreate: {
     selectedDate?: string;
+    currentUserId?: string;
     eventId?: string;
   };
 };

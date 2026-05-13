@@ -43,9 +43,9 @@ const LanguageScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* 3. On remplace les textes en dur par les variables du slice */}
-      <Text style={styles.title}>{t.langSelect}</Text>
+      <Text style={styles.title}>{t.common.langSelect}</Text>
 
-      <Text style={styles.subtitle}>{t.langSelect}</Text>
+      <Text style={styles.subtitle}>{t.common.langSelect}</Text>
 
       <FlatList
         data={languages}
@@ -72,14 +72,14 @@ const LanguageScreen = () => {
       />
 
       <View style={styles.footer}>
-        <Text style={styles.info}>{t.timezoneInfo} :</Text>
+        <Text style={styles.info}>{t.common.timezoneInfo} :</Text>
 
         {/* Si timezone est vide ou null, on affiche le message d'erreur traduit */}
         <Text style={[styles.timezoneText, !timezone && { color: "red" }]}>
-          {timezone || t.timezoneError}
+          {timezone || t.common.timezoneError}
         </Text>
 
-        <Text style={styles.hint}>{t.timezoneDetail}</Text>
+        <Text style={styles.hint}>{t.common.timezoneDetail}</Text>
       </View>
     </SafeAreaView>
   );

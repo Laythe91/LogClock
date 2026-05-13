@@ -4,6 +4,8 @@ import { Modal, FlatList, Pressable, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { styles } from "../../styles/eventForm.styles";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../core/store";
 
 type Props = {
   visible: boolean;
@@ -25,6 +27,11 @@ const FormParticipantsModal = ({
   contacts,
 }: Props) => {
   const participants = watch("participants") ?? [];
+  const { current, translations } = useSelector(
+    (state: RootState) => state.locales,
+  );
+
+  const t = translations[current];
 
   const toggle = (id: string) => {
     const updated = participants.includes(id)
@@ -40,7 +47,7 @@ const FormParticipantsModal = ({
   return (
     <Modal visible={visible} animationType="slide">
       <SafeAreaView style={styles.modal}>
-        <Text style={styles.title}>Participants</Text>
+        <Text style={styles.title}>{t.events.form.participantsTitle}</Text>
 
         <FlatList
           data={contacts}
@@ -70,7 +77,7 @@ const FormParticipantsModal = ({
         />
 
         <Pressable style={styles.submit} onPress={() => setVisible(false)}>
-          <Text style={{ color: "white" }}>Valider</Text>
+          <Text style={{ color: "white" }}>{t.common.validate}</Text>
         </Pressable>
       </SafeAreaView>
     </Modal>

@@ -5,12 +5,15 @@ import { styles } from "../../styles/eventForm.styles";
 type Props = {
   count: number;
   onPress: () => void;
+  t: any;
 };
 
-const FormParticipantsButton = ({ count, onPress }: Props) => {
+const FormParticipantsButton = ({ count, t, onPress }: Props) => {
   return (
     <Pressable style={styles.btn} onPress={onPress}>
-      <Text>Choisir participants ({count})</Text>
+      <Text>
+        {t.events.form.chooseParticipants} ({count})
+      </Text>
     </Pressable>
   );
 };

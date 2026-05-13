@@ -30,18 +30,18 @@ const RegisterScreen = () => {
 
   const schema = Yup.object().shape({
     userName: Yup.string()
-      .required(t.errors.userNameRequired)
-      .matches(/^\S*$/, t.errors.noSpaces)
-      .min(3, t.errors.userNameTooShort),
+      .required(t.validation.userNameRequired)
+      .matches(/^\S*$/, t.validation.noSpaces)
+      .min(3, t.validation.userNameTooShort),
     email: Yup.string()
-      .email(t.errors.emailInvalid)
-      .required(t.errors.emailRequired),
+      .email(t.validation.emailInvalid)
+      .required(t.validation.emailRequired),
     password: Yup.string()
-      .required(t.errors.passRequired)
-      .min(6, t.errors.passTooShort),
+      .required(t.validation.passRequired)
+      .min(6, t.validation.passTooShort),
     confirmPassword: Yup.string()
-      .required(t.errors.passRequired)
-      .oneOf([Yup.ref("password")], t.errors.passMustMatch),
+      .required(t.validation.passRequired)
+      .oneOf([Yup.ref("password")], t.validation.passMustMatch),
   });
 
   const {
@@ -87,7 +87,7 @@ const RegisterScreen = () => {
             </View>
 
             <View style={styles.formContainer}>
-              <Text style={styles.title}>{t.SignUpTitle}</Text>
+              <Text style={styles.title}>{t.auth.register.title}</Text>
 
               <View style={styles.inputs}>
                 {/* NOM D'UTILISATEUR */}
@@ -96,7 +96,7 @@ const RegisterScreen = () => {
                   name="userName"
                   render={({ field: { onChange, value } }) => (
                     <TextInput
-                      placeholder={t.UserNamePlaceholder}
+                      placeholder={t.auth.register.userName}
                       style={[
                         styles.textInput,
                         errors.userName && styles.inputError,
@@ -123,7 +123,7 @@ const RegisterScreen = () => {
                   name="email"
                   render={({ field: { onChange, value } }) => (
                     <TextInput
-                      placeholder={t.emailPlaceholder}
+                      placeholder={t.common.email}
                       style={[
                         styles.textInput,
                         errors.email && styles.inputError,
@@ -155,7 +155,7 @@ const RegisterScreen = () => {
                       ]}
                     >
                       <TextInput
-                        placeholder={t.passwordPlaceholder}
+                        placeholder={t.common.password}
                         style={styles.textInputWithIcon}
                         placeholderTextColor="#999"
                         value={value}
@@ -193,7 +193,7 @@ const RegisterScreen = () => {
                       ]}
                     >
                       <TextInput
-                        placeholder={t.confirmPasswordPlaceholder}
+                        placeholder={t.common.confirmPassword}
                         style={styles.textInputWithIcon}
                         placeholderTextColor="#999"
                         value={value}
@@ -236,7 +236,7 @@ const RegisterScreen = () => {
                 >
                   <View style={styles.connect}>
                     <Text style={styles.textConnect}>
-                      {t.finishCreateAccount}
+                      {t.auth.register.finishCreateAccount}
                     </Text>
                   </View>
                 </Pressable>

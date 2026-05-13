@@ -3,14 +3,14 @@ import { Controller } from "react-hook-form";
 import { TextInput } from "react-native";
 import { styles } from "../../styles/eventForm.styles";
 
-const FormDescriptionField = ({ control }: any) => {
+const FormDescriptionField = ({ control, t }: any) => {
   return (
     <Controller
       control={control}
       name="description"
       render={({ field: { value, onChange } }) => (
         <TextInput
-          placeholder="Description"
+          placeholder={t.events.form.descriptionPlaceholder}
           value={value ?? ""}
           onChangeText={onChange}
           style={styles.input}
