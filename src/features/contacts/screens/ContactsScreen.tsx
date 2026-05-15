@@ -6,27 +6,57 @@ import {
   Pressable,
   Text,
 } from "react-native";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ContactCard from "../components/ContactCard";
 import ContactItem from "./ContactItem";
-import { useRoute } from "@react-navigation/native";
-import { Contact, ContactStatus } from "../../../types/Contact";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import {
+  Contact,
+  ContactFilter,
+  ContactsTabParamList,
+  ContactStatus,
+} from "../../../types/Contact";
 import { useSelector } from "react-redux";
 import { selectContactsByFilter } from "../contactsSelectors";
 import { RootState } from "../../../core/store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import {
+  selectAcceptedContacts,
+  selectPendingContacts,
+  selectBlockedContacts,
+  selectRefusedContacts,
+} from "../contactsSelectors";
+
+type ContactSelector = (state: RootState) => Contact[];
+
+const selectorMap: Record<ContactStatus, ContactSelector> = {
+  accepted: selectAcceptedContacts,
+  pending: selectPendingContacts,
+  blocked: selectBlockedContacts,
+  refused: selectRefusedContacts,
+};
 
 const ContactsScreen = () => {
-  const route = useRoute<any>();
+  /* const route = useRoute<any>();
   const { filter } = route.params; // "accepted", "pending" ou "blocked"
-  // Pour tes logs, ils apparaîtront maintenant à chaque changement d'onglet
+  // Pour tes logs, ils apparaîtront maintenant à chaque changement d'onglet */
+  const route =
+    useRoute<RouteProp<ContactsTabParamList, keyof ContactsTabParamList>>();
+
+  const { filter } = route.params;
   console.log(`Route ====== ${route.params.filter}`);
 
   // On utilise le sélecteur qu'on a créé
-  const filteredContacts = useSelector((state: RootState) =>
+  /* const filteredContacts = useSelector((state: RootState) =>
     selectContactsByFilter(state, filter),
   );
+  */
+  const selectedSelector = useMemo(() => selectorMap[filter], [filter]);
+
+  const filteredContacts = useSelector(selectedSelector);
+
+  console.log(`Route ====== ${filteredContacts}`);
 
   // Pour tes logs, ils apparaîtront maintenant à chaque changement d'onglet
   console.log(`[Redux] Onglet: ${filter}, Nb: ${filteredContacts.length}`);

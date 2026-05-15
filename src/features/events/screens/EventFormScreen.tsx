@@ -5,7 +5,10 @@ import { createEvent, updateEvent } from "../eventsThunks";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { eventSchema } from "../schemas/event.schema";
-import { selectContactsByFilter } from "../../contacts/contactsSelectors";
+import {
+  selectAcceptedContacts,
+  selectContactsByFilter,
+} from "../../contacts/contactsSelectors";
 import { RootState } from "../../../core/store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -52,9 +55,10 @@ const EventFormScreen = () => {
     eventId ? selectEventFullDetails(state, eventId) : null,
   );
   const dispatch = useDispatch();
-  const contacts = useSelector((state: RootState) =>
+  /*const contacts = useSelector((state: RootState) =>
     selectContactsByFilter(state, "accepted"),
-  );
+  );*/
+  const contacts = useSelector(selectAcceptedContacts);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [pickerVisible, setPickerVisible] = useState(false);

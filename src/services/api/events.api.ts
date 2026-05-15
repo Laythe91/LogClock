@@ -2,27 +2,19 @@ import { axiosClient } from "./axiosClient";
 import { ApiEvent, CreateEventDto } from "../../types/Event";
 
 export const eventsApi = {
-  createEvent: async (dto: CreateEventDto): Promise<ApiEvent> => {
-    const { data } = await axiosClient.post("/events", dto);
-    return data;
+  create: async (dto: CreateEventDto) => {
+    return axiosClient.post<ApiEvent>("/events", dto);
   },
 
-  updateEvent: async (
-    id: string,
-    event: Partial<ApiEvent>,
-  ): Promise<ApiEvent> => {
-    const { data } = await axiosClient.put(`/events/${id}`, event);
-
-    return data;
+  update: async (id: string, dto: Partial<ApiEvent>) => {
+    return axiosClient.put<ApiEvent>(`/events/${id}`, dto);
   },
 
-  getEvents: async (): Promise<ApiEvent[]> => {
-    const { data } = await axiosClient.get("/events");
-    return data;
+  getAll: async () => {
+    return axiosClient.get<ApiEvent[]>("/events");
   },
 
-  deleteEvent: async (id: string) => {
-    await axiosClient.delete(`/events/${id}`);
-    return id;
+  remove: async (id: string) => {
+    return axiosClient.delete(`/events/${id}`);
   },
 };

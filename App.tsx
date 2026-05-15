@@ -21,6 +21,7 @@ import ProfileScreen from "./src/features/user/UserScreen";
 import EventsTabs from "./src/features/events/EventsTabs";
 import EventDetailsScreen from "./src/features/events/screens/EventDetailsScreen";
 import EventFormScreen from "./src/features/events/screens/EventFormScreen";
+import ConfirmModal from "./src/features/contacts/components/ConfirmModal";
 
 const MainTabs = createBottomTabNavigator({
   screenOptions: {
@@ -181,6 +182,29 @@ const EventsStack = createNativeStackNavigator({
   },
 });
 
+const ContactsStack = createNativeStackNavigator({
+  screenOptions: {
+    headerShown: false,
+  },
+  screens: {
+    MainContact: {
+      screen: ContactsTabs,
+      options: {
+        title: "Ami",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+    Confirm: {
+      screen: ConfirmModal,
+      options: {
+        title: "block unblock delete",
+        animation: "slide_from_right",
+        headerShown: false, // 🔥 IMPORTANT
+      },
+    },
+  },
+});
+
 const MyDrawer = createDrawerNavigator({
   // Utilise ":" ici, pas "="
   screenOptions: ({ navigation }) => ({
@@ -210,7 +234,7 @@ const MyDrawer = createDrawerNavigator({
       },
     },
     Contacts: {
-      screen: ContactsTabs,
+      screen: ContactsStack,
       options: {
         title: "Amis",
         drawerIcon: ({ color, size }) => (

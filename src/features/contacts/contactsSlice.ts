@@ -1,55 +1,67 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ContactStatus } from "../../types/Contact";
+import {
+  createSlice,
+  createEntityAdapter,
+  PayloadAction,
+} from "@reduxjs/toolkit";
+
+import { ContactStatus, Contact } from "../../types/Contact";
+
 import DATA from "../../data";
 
-interface ContactsState {
-  currentUserId: string;
-
-  relations: Record<string, "accepted" | "pending" | "blocked" | "refused">;
-
-  profilesById: Record<
-    string,
-    {
-      id: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-      profileImage: string;
-    }
-  >;
-}
+export const contactsAdapter = createEntityAdapter<Contact>({
+  sortComparer: (a, b) => a.lastName.localeCompare(b.lastName),
+});
 
 const currentUser = DATA.users.find((u) => u.id === "user2");
 
-const profilesById = Object.fromEntries(
-  DATA.userProfiles.map((p) => [p.id, p]),
-);
+const initialState = contactsAdapter.getInitialState({
+  currentUserId: "user2",
 
-const initialState: ContactsState = {
-  currentUserId: "user1",
   relations: (currentUser?.contactsStatusCache ?? {}) as Record<
     string,
     ContactStatus
   >,
-  profilesById,
-};
+});
+
+const hydratedState = contactsAdapter.setAll(initialState, DATA.userProfiles);
 
 const contactsSlice = createSlice({
   name: "contacts",
-  initialState,
+
+  initialState: hydratedState,
+
   reducers: {
+    addContact: contactsAdapter.addOne,
+
+    addContacts: contactsAdapter.addMany,
+
+    updateContact: contactsAdapter.updateOne,
+
+    removeContact: contactsAdapter.removeOne,
+
+    clearContacts: contactsAdapter.removeAll,
+
     updateContactStatus: (
       state,
       action: PayloadAction<{
         targetId: string;
-        status: "accepted" | "pending" | "blocked" | "refused";
+        status: ContactStatus;
       }>,
     ) => {
-      state.relations[action.payload.targetId] = action.payload.status;
+      const { targetId, status } = action.payload;
+
+      state.relations[targetId] = status;
     },
   },
 });
 
-export const { updateContactStatus } = contactsSlice.actions;
+export const {
+  addContact,
+  addContacts,
+  updateContact,
+  removeContact,
+  clearContacts,
+  updateContactStatus,
+} = contactsSlice.actions;
+
 export default contactsSlice.reducer;

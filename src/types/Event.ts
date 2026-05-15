@@ -21,6 +21,19 @@ export interface AppEvent {
   participants: {
     [userId: string]: ParticipantStatus;
   };
+
+  isOptimistic?: boolean;
+
+  /*
+   Plus tard on remplace isOptimistic par 
+   syncStatus?: "synced" | "pending" | "failed"
+
+Ça devient beaucoup plus puissant pour :
+
+offline mode
+retry
+sync queue
+erreurs réseau */
 }
 // Comme ton ContactFilter
 

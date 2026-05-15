@@ -21,7 +21,7 @@ export const selectEventFullDetails = createSelector(
   [
     (state: RootState, eventId: string) => state.events.entities[eventId],
 
-    (state: RootState) => state.contacts.profilesById,
+    (state: RootState) => state.contacts.entities,
   ],
   (event, profilesById): EventDetails | null => {
     if (!event) return null;
@@ -52,44 +52,6 @@ export const selectEventFullDetails = createSelector(
     };
   },
 );
-
-/*
-export const selectEventFullDetails = createSelector(
-  [
-    (state: RootState, eventId: string) => state.events.entities[eventId],
-
-    (state: RootState) => state.contacts.profilesById,
-  ],
-  (event, profilesById) => {
-    if (!event) return null;
-
-    const participants = Object.entries(event.participants).map(
-      ([userId, status]) => {
-        const user = profilesById[userId];
-
-        return {
-          id: userId,
-          name: user ? `${user.firstName} ${user.lastName}` : "Unknown",
-          status,
-        };
-      },
-    );
-
-    const creator = profilesById[event.creatorId];
-
-    return {
-      ...event,
-      creator: creator
-        ? {
-            id: creator.id,
-            name: `${creator.firstName} ${creator.lastName}`,
-          }
-        : null,
-      participants,
-    };
-  },
-);
-*/
 
 export const selectInvitedEventsCount = createSelector(
   [selectors.selectAll, (state: RootState) => state.auth.userId],
@@ -129,19 +91,27 @@ export const selectMyEventsWithFilter = createSelector(
   },
 );
 
+const selectEvent = (state: RootState, eventId: string) =>
+  state.events.entities[eventId];
+
 export const selectParticipantsByStatus = createSelector(
   [
-    (state: RootState, eventId: string) => state.events.entities[eventId],
-    (state: RootState) => state.contacts.profilesById,
+    selectEvent,
+    (state: RootState) => state.contacts.entities,
     (_: RootState, __: string, status?: ParticipantStatus) => status,
   ],
-  (event, profilesById, status) => {
+  (event, contacts, status) => {
     if (!event) return [];
 
-    return Object.entries(event.participants)
+    const entries = Object.entries(event.participants) as [
+      string,
+      ParticipantStatus,
+    ][];
+
+    return entries
       .filter(([_, s]) => !status || s === status)
       .map(([userId, s]) => {
-        const user = profilesById[userId];
+        const user = contacts[userId];
 
         return {
           id: userId,

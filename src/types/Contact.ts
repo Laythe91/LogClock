@@ -1,29 +1,34 @@
 // src/types/Friend.ts
 export interface Contact {
   id: string;
-  // Propriétés de base conservées
-  name?: string;
+
+  firstName: string;
+  lastName: string;
+
   email?: string;
+  phone?: string;
+
   avatarUrl?: string;
+  profileImage?: string;
+
   location?: {
     latitude?: number;
     longitude?: number;
     address?: string;
-    // Ajout pour matcher avec DATA (lat/lng/updatedAt)
+
     lat?: number;
     lng?: number;
     updatedAt?: string;
   };
 
-  // --- AJOUTS POUR MATCHER DATA & COMPONENTS ---
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  profileImage?: string; // Utilisé dans tes composants à la place d'avatarUrl
-
-  // Pour la logique de relation (contactsStatusCache)
-  status?: "accepted" | "pending" | "blocked" | "refused";
   addedAt?: string;
 }
 
 export type ContactStatus = "accepted" | "pending" | "blocked" | "refused";
+export type ContactFilter = "accepted" | "pending" | "blocked" | "refused";
+
+export type ContactsTabParamList = {
+  Accepted: { filter: ContactFilter };
+  Pending: { filter: ContactFilter };
+  Blocked: { filter: ContactFilter };
+};

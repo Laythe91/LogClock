@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ContactsScreen from "./screens/ContactsScreen";
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { ContactsTabParamList } from "../../types/Contact";
 
-const ContactsTabs = createBottomTabNavigator({
+const ContactsTabs = createBottomTabNavigator<ContactsTabParamList>({
   screenOptions: {
     tabBarStyle: {
       backgroundColor: "royalblue",
